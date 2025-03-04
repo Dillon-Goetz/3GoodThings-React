@@ -2,7 +2,6 @@
 import React from "react";
 import { Login } from "./Login";
 import { Signup } from "./Signup";
-import "../../styles/AuthPage.css";
 import { Client, Account, Models } from "appwrite";
 
 // Initialize Appwrite client
@@ -54,3 +53,5 @@ export const AuthPage: React.FC<AuthPageProps> = ({
     </div>
   );
 };
+
+export default AuthPage
