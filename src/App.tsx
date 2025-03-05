@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import AuthPage from './components/Features/auth/components/AuthPage'
-import './App.css'
+import "./App.css";
+import "./style.css";
 // import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import JournalHome from './components/Journal/JournalHome';
 
