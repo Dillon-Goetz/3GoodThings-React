@@ -1,10 +1,9 @@
-import { useState } from 'react'
-import AuthPage from './components/Features/auth/components/AuthPage'
-import "./App.css";
-import "./style.css";
-// import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { useState } from 'react';
+import { Routes, Route } from 'react-router-dom';
+import AuthPage from './components/Features/auth/components/AuthPage';
 import JournalHome from './components/Journal/JournalHome';
-
+import './App.css';
+import './style.css';
 
 const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -17,13 +16,13 @@ const App: React.FC = () => {
   return (
     <div>
       {!isLoggedIn ? (
-        <AuthPage 
-          mode={authMode} 
-          toggleMode={toggleAuthMode} 
+        <AuthPage
+          mode={authMode}
+          toggleMode={toggleAuthMode}
           onLoginSuccess={(user) => {
             setIsLoggedIn(true);
-            console.log("User logged in:", user); // Or any other logic
-          }} 
+            console.log("User logged in:", user);
+          }}
         />
       ) : (
         <JournalHome />

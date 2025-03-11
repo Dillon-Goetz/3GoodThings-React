@@ -1,57 +1,47 @@
-// src/components/auth/AuthPage.tsx
-import React from "react";
-import { Login } from "./Login";
-import { Signup } from "./Signup";
-import { Client, Account, Models } from "appwrite";
-
-// Initialize Appwrite client
-const client = new Client()
-  .setEndpoint(import.meta.env.VITE_APPWRITE_ENDPOINT)
-  .setProject(import.meta.env.VITE_APPWRITE_PROJECT);
-
-const account = new Account(client);
+import React, { useState, useEffect } from 'react';
+import { account } from "../../../../appwriteConfig"; 
+import { Login } from './Login';  
+import { Signup } from './Signup';  
+import { Models } from 'appwrite';
 
 interface AuthPageProps {
-  mode: "login" | "signup";
+  mode: 'login' | 'signup';
   toggleMode: () => void;
   onLoginSuccess: (user: Models.User<Models.Preferences>) => void;
 }
 
-export const AuthPage: React.FC<AuthPageProps> = ({
-  mode,
-  toggleMode,
-  onLoginSuccess,
-}) => {
+const AuthPage = ({ mode, toggleMode, onLoginSuccess }: AuthPageProps) => {
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if the user is already logged in
+    const checkSession = async () => {
+      try {
+        const user = await account.get();
+        onLoginSuccess(user);  // If already logged in, pass user to parent
+      } catch (err) {
+        // No session found, so allow login or signup
+        console.log("No active session found.");
+      }
+    };
+
+    checkSession();
+  }, [onLoginSuccess]);
+
   return (
-    <div className="auth-container">
-      <div className="auth-card">
-        <h2 className="auth-title">
-          {mode === "login" ? "Welcome Back" : "Create Account"}
-        </h2>
-        {mode === "login" ? (
-          <>
-            <Login onLoginSuccess={onLoginSuccess} account={account} />
-            <p className="auth-switch">
-              Don't have an account?{" "}
-              <button onClick={toggleMode} className="auth-switch-btn">
-                Sign up
-              </button>
-            </p>
-          </>
-        ) : (
-          <>
-            <Signup onLoginSuccess={onLoginSuccess} account={account} />
-            <p className="auth-switch">
-              Already have an account?{" "}
-              <button onClick={toggleMode} className="auth-switch-btn">
-                Log in
-              </button>
-            </p>
-          </>
-        )}
-      </div>
+    <div>
+      {mode === 'login' ? (
+        <Login onLoginSuccess={onLoginSuccess} />
+      ) : (
+        <Signup onLoginSuccess={onLoginSuccess} />
+      )}
+
+      <button onClick={toggleMode}>
+        Switch to {mode === 'login' ? 'Sign Up' : 'Log In'}
+      </button>
+      {error && <p className="error-message">{error}</p>}
     </div>
   );
 };
 
-export default AuthPage
+export default AuthPage;
