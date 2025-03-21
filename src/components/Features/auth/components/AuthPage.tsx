@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { account } from "../../../../appwriteConfig"; 
 import { Login } from './Login';  
 import { Signup } from './Signup';  

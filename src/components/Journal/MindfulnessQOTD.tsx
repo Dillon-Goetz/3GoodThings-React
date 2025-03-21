@@ -1,14 +1,23 @@
-//linked API of minfulness quotes, one per day. no repeating for 90 days? 
-//idea: have a thumbs up button to save it to a reflections folder in the future? 
 import React from "react";
+import BackButton from '../Shared/NavigationButtons/BackButton';
+import NextButton from "../Shared/NavigationButtons/SkipButton";
 
+//Add the interface for the props.
+interface MindfulnessQOTDProps {
+    onNext: () => void;
+    onBack: () => void;
+}
 
-const MindfulnessQOTD: React.FC = () => {
+const MindfulnessQOTD: React.FC<MindfulnessQOTDProps> = ({ onNext, onBack }) => {
     return (
-      <div>
-        {/* Placeholder content - you can leave this empty for now */}
-      </div>
+        <section>
+            <h2>Today's Quotation</h2>
+            <p>Be true to yourself</p>
+            <span>-Dillon Goetz</span>
+            <BackButton onClick={onBack} />
+            <NextButton onClick={onNext} text="Next" />
+        </section>
     );
-  };
-  
-  export default MindfulnessQOTD;
+}
+
+export default MindfulnessQOTD;
