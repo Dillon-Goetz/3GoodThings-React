@@ -24,24 +24,38 @@ const App: React.FC = () => {
         <div>
             {isLoggedIn && <Header onLogout={handleLogout} />}
             <Routes>
-                <Route path="/login" element={!isLoggedIn ? (
-                    <AuthPage
-                        mode={authMode}
-                        toggleMode={toggleAuthMode}
-                        onLoginSuccess={(user) => {
-                            setIsLoggedIn(true);
-                            console.log("User logged in:", user);
-                            navigate('/');
-                        }}
-                    />
-                ) : (
-                    <JournalHome />
-                )} />
-                <Route path="/" element={isLoggedIn ? <JournalHome /> : <AuthPage mode={authMode} toggleMode={toggleAuthMode} onLoginSuccess={(user) => {
-                            setIsLoggedIn(true);
-                            console.log("User logged in:", user);
-                            navigate('/');
-                        }}/>} />
+                <Route 
+                    path="/login" 
+                    element={!isLoggedIn ? (
+                        <AuthPage
+                            mode={authMode}
+                            toggleMode={toggleAuthMode}
+                            onLoginSuccess={(user) => {
+                                setIsLoggedIn(true);
+                                console.log("User logged in:", user);
+                                navigate('/journal'); // Redirect to JournalHome after login
+                            }}
+                        />
+                    ) : (
+                        <JournalHome />
+                    )} 
+                />
+                <Route 
+                    path="/" 
+                    element={isLoggedIn ? <JournalHome /> : (
+                        <AuthPage 
+                            mode={authMode} 
+                            toggleMode={toggleAuthMode} 
+                            onLoginSuccess={(user) => {
+                                setIsLoggedIn(true);
+                                console.log("User logged in:", user);
+                                navigate('/journal/'); // Redirect to JournalHome after login
+                            }}
+                        />
+                    )} 
+                />
+                {/* This handles all Journal-related routes */}
+                <Route path="/journal/*" element={<JournalHome />} />
             </Routes>
         </div>
     );
