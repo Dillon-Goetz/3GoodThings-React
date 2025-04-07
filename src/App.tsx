@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import AuthPage from './components/Features/auth/components/AuthPage';
 import JournalHome from './components/Journal/JournalHome';
+import ProfileDashboard from './components/Profile/ProfileDashboard';
 import './App.css';
 import './style.css';
 import Header from './components/Shared/Header/Header';
@@ -22,7 +23,9 @@ const App: React.FC = () => {
 
     return (
         <div>
-            {isLoggedIn && <Header onLogout={handleLogout} />}
+            {/* Always show the Header regardless of login status */}
+            <Header onLogout={handleLogout} />
+
             <Routes>
                 <Route 
                     path="/login" 
@@ -42,23 +45,25 @@ const App: React.FC = () => {
                 />
                 <Route 
                     path="/" 
-                    element={isLoggedIn ? <JournalHome /> : (
+                    element={isLoggedIn ? (
+                        <Navigate to="/journal" />  // Redirect to /journal if logged in
+                    ) : (
                         <AuthPage 
                             mode={authMode} 
                             toggleMode={toggleAuthMode} 
                             onLoginSuccess={(user) => {
                                 setIsLoggedIn(true);
                                 console.log("User logged in:", user);
-                                navigate('/journal/'); // Redirect to JournalHome after login
+                                navigate('/journal');
                             }}
                         />
                     )} 
                 />
                 {/* This handles all Journal-related routes */}
                 <Route path="/journal/*" element={<JournalHome />} />
+                <Route path="/profile" element={<ProfileDashboard />} />  {/* Profile route */}
             </Routes>
         </div>
     );
 };
-
 export default App;

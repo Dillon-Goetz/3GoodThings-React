@@ -31,47 +31,45 @@ const JournalHome: React.FC = () => {
     ];
 
     const lastFormIndex = forms.length - 1;
-    const firstFormPath = forms[0].path;
+    const firstFormPath = "/journal/vibe-check"; // Path to the first form
 
     useEffect(() => {
-        if (currentFormIndex === 0) {
             navigate(firstFormPath);
-        }
+        
 
-        // Daily Reset Logic
-        const getTimeUntilMidnight = () => {
-            const now = new Date();
-            const midnight = new Date(now);
-            midnight.setHours(24, 0, 0, 0);
-            return midnight.getTime() - now.getTime();
-        };
-
-        const resetJournalData = () => {
-            console.log('Resetting journal data...');
-            localStorage.removeItem('journalEntries'); 
-        };
-
-        const timeoutId = setTimeout(resetJournalData, getTimeUntilMidnight());
-        return () => clearTimeout(timeoutId);
-    }, [currentFormIndex, navigate, firstFormPath]);
-
-    const navigateToForm = (index: number) => {
-        setCurrentFormIndex(index);
-        navigate(`/journal/${forms[index].path}`);
+    // Daily Reset Logic
+    const getTimeUntilMidnight = () => {
+        const now = new Date();
+        const midnight = new Date(now);
+        midnight.setHours(24, 0, 0, 0);
+        return midnight.getTime() - now.getTime();
     };
 
-    const handleNextForm = () => {
-        if (currentFormIndex < lastFormIndex) {
-            navigateToForm(currentFormIndex + 1);
-        }
+    const resetJournalData = () => {
+        console.log('Resetting journal data...');
+        localStorage.removeItem('journalEntries'); 
     };
 
-    const handleBack = () => {
-        if (currentFormIndex > 0) {
-            navigateToForm(currentFormIndex - 1);
-        }
-    };
+    const timeoutId = setTimeout(resetJournalData, getTimeUntilMidnight());
+    return () => clearTimeout(timeoutId);
+}, [navigate]); // Removed currentFormIndex and firstFormPath to avoid loop
 
+const navigateToForm = (index: number) => {
+    setCurrentFormIndex(index);
+    navigate(`/journal/${forms[index].path}`);
+};
+
+const handleNextForm = () => {
+    if (currentFormIndex < lastFormIndex) {
+        navigateToForm(currentFormIndex + 1);
+    }
+};
+
+const handleBack = () => {
+    if (currentFormIndex > 0) {
+        navigateToForm(currentFormIndex - 1);
+    }
+};
     return (
         <div>
             <Routes>

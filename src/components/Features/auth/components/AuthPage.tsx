@@ -37,7 +37,7 @@ const AuthPage = ({ mode, toggleMode, onLoginSuccess }: AuthPageProps) => {
       )}
 
       <button onClick={toggleMode}>
-        Switch to {mode === 'login' ? 'Sign Up' : 'Log In'}
+        {mode === 'login' ? 'Sign Up' : 'Log In'}
       </button>
       {error && <p className="error-message">{error}</p>}
     </div>
