@@ -15,7 +15,7 @@ const MindfulnessQOTD: React.FC<MindfulnessQOTDProps> = ({ onNext, onBack }) => 
     useEffect(() => {
         const fetchQuote = async () => {
             try {
-                const response = await fetch("https://buddha-api.com/api/today");
+                const response = await fetch("Buddha API Link"); //https://buddha-api.com/api/today
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import { Routes, Route, useNavigate, Navigate } from 'react-router-dom';
 import AuthPage from './components/Features/auth/components/AuthPage';
 import JournalHome from './components/Journal/JournalHome';
 import ProfileDashboard from './components/Profile/ProfileDashboard';

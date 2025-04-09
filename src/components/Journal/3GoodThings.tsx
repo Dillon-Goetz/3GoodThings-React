@@ -1,8 +1,15 @@
 import React, { useState } from 'react';
 import { Databases, ID, Account } from 'appwrite';
 import { client, account, databases } from '../../appwriteConfig';
+import BackButton from '../Shared/NavigationButtons/BackButton';
+import SaveNextButton from '../Shared/NavigationButtons/SaveNextButton';
 
-const ThreeGoodThings: React.FC = () => {
+interface ThreeGoodThingsProps {
+    onNext: () => void;
+    onBack: () => void;
+  }
+
+  const ThreeGoodThings: React.FC<ThreeGoodThingsProps> = ({ onNext, onBack }) => {
     const [goodThing1, setGoodThing1] = useState('');
     const [goodThing2, setGoodThing2] = useState('');
     const [goodThing3, setGoodThing3] = useState('');
@@ -41,25 +48,30 @@ const ThreeGoodThings: React.FC = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <section>
+            <form onSubmit={handleSubmit}>
+                <div>
+                    <label>Good Thing 1:</label>
+                    <textarea value={goodThing1} onChange={(e) => setGoodThing1(e.target.value)} />
+                </div>
+                <div>
+                    <label>Good Thing 2:</label>
+                    <textarea value={goodThing2} onChange={(e) => setGoodThing2(e.target.value)} />
+                </div>
+                <div>
+                    <label>Good Thing 3:</label>
+                    <textarea value={goodThing3} onChange={(e) => setGoodThing3(e.target.value)} />
+                </div>
+                <div>
+                    <label>Share to Feed:</label>
+                    <input type="checkbox" checked={isPublic} onChange={(e) => setIsPublic(e.target.checked)} />
+                </div>
+            </form>
             <div>
-                <label>Good Thing 1:</label>
-                <textarea value={goodThing1} onChange={(e) => setGoodThing1(e.target.value)} />
+            <BackButton onClick={onBack} />
+            <SaveNextButton onClick={onNext} text="Save & Next"/>
             </div>
-            <div>
-                <label>Good Thing 2:</label>
-                <textarea value={goodThing2} onChange={(e) => setGoodThing2(e.target.value)} />
-            </div>
-            <div>
-                <label>Good Thing 3:</label>
-                <textarea value={goodThing3} onChange={(e) => setGoodThing3(e.target.value)} />
-            </div>
-            <div>
-                <label>Share to Feed:</label>
-                <input type="checkbox" checked={isPublic} onChange={(e) => setIsPublic(e.target.checked)} />
-            </div>
-
-        </form>
+        </section>
     );
 };
 

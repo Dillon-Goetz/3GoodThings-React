@@ -8,6 +8,7 @@ import OneThorn from './OneThorn';
 import JournalEntry from './JournalEntry';
 import AddPhoto from './AddPhoto';
 import SubmitAll from './SubmitAll';
+import useDailyReset from '../../Hooks/useDailyReset';
 
 // Defines the props interface for the form components
 export interface FormProps {
@@ -33,59 +34,55 @@ const JournalHome: React.FC = () => {
     const lastFormIndex = forms.length - 1;
     const firstFormPath = "/journal/vibe-check"; // Path to the first form
 
+    // Redirect to the first form if on the base path
     useEffect(() => {
+        if (window.location.pathname === "/journal") {
             navigate(firstFormPath);
-        
+        }
+    }, [navigate]);
 
-    // Daily Reset Logic
-    const getTimeUntilMidnight = () => {
-        const now = new Date();
-        const midnight = new Date(now);
-        midnight.setHours(24, 0, 0, 0);
-        return midnight.getTime() - now.getTime();
+    // Reset journal data at midnight
+        useDailyReset(() => {
+            console.log('Resetting journal data...');
+            localStorage.removeItem('journalEntries');
+        });
+
+        const navigateToForm = (index: number) => {
+            setCurrentFormIndex(index);
+            navigate(`/journal/${forms[index].path}`);
+        };
+
+    const handleNextForm = (vibe?: string) => {
+        if (currentFormIndex < lastFormIndex) {
+            const nextPath = `/journal/${forms[currentFormIndex + 1].path}`;
+            const query = vibe ? `?vibe=${vibe}` : "";
+            console.log(`Navigating to: ${nextPath}${query}`); // Log the next path and query
+            navigate(`${nextPath}${query}`);
+            setCurrentFormIndex(currentFormIndex + 1);
+        }
     };
 
-    const resetJournalData = () => {
-        console.log('Resetting journal data...');
-        localStorage.removeItem('journalEntries'); 
+    const handleBack = () => {
+        if (currentFormIndex > 0) {
+            navigateToForm(currentFormIndex - 1);
+        }
     };
+        return (
+            <div>
+                <Routes>
+                    {/* Default Route (VibeCheck) when visiting /journal */}
+                    <Route index element={<VibeCheck onNext={handleNextForm} />} />
 
-    const timeoutId = setTimeout(resetJournalData, getTimeUntilMidnight());
-    return () => clearTimeout(timeoutId);
-}, [navigate]); // Removed currentFormIndex and firstFormPath to avoid loop
-
-const navigateToForm = (index: number) => {
-    setCurrentFormIndex(index);
-    navigate(`/journal/${forms[index].path}`);
-};
-
-const handleNextForm = () => {
-    if (currentFormIndex < lastFormIndex) {
-        navigateToForm(currentFormIndex + 1);
-    }
-};
-
-const handleBack = () => {
-    if (currentFormIndex > 0) {
-        navigateToForm(currentFormIndex - 1);
-    }
-};
-    return (
-        <div>
-            <Routes>
-                {/* Default Route (VibeCheck) when visiting /journal */}
-                <Route index element={<VibeCheck onNext={handleNextForm} />} />
-
-                {forms.map((form, index) => (
-                    <Route 
-                        key={index} 
-                        path={form.path} 
-                        element={<form.component onNext={handleNextForm} onBack={handleBack} />} 
-                    />
-                ))}
-            </Routes>
-        </div>
-    );
+                    {forms.map((form, index) => (
+                        <Route 
+                            key={index} 
+                            path={form.path} 
+                            element={<form.component onNext={handleNextForm} onBack={handleBack} />} 
+                        />
+                    ))}
+                </Routes>
+            </div>
+        );
 };
 
 export default JournalHome;

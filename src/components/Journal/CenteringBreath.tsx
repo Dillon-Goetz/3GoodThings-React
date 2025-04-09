@@ -45,8 +45,8 @@ const CenteringBreath: React.FC<CenteringBreathProps> = ({ onNext, onBack }) => 
           <p>Exhale slowly through your mouth...</p>
           <p>Repeat 2 more times.</p>
           <BackButton onClick={onBack} />
-          <NextButton onClick={onNext} text="Next" />
-        </div>
+          <NextButton onClick={onNext} text="I'm Ready" />
+      </div>
   );
 };
 
