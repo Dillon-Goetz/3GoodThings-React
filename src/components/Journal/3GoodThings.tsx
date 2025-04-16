@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { Databases, ID, Account } from 'appwrite';
+import { useLocation, } from "react-router-dom";
 import { client, account, databases } from '../../appwriteConfig';
 import BackButton from '../Shared/NavigationButtons/BackButton';
 import SaveNextButton from '../Shared/NavigationButtons/SaveNextButton';
+
+//SaveNextButton required for this component
 
 interface ThreeGoodThingsProps {
     onNext: () => void;

@@ -3,6 +3,7 @@ import { useLocation, } from "react-router-dom";
 import BackButton from '../Shared/NavigationButtons/BackButton';
 import NextButton from '../Shared/NavigationButtons/SkipButton'; // Import SaveNextButton
 
+// Back and Next button required for this component 
 interface CenteringBreathProps {
   onNext: () => void;
   onBack: () => void;
