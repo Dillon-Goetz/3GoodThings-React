@@ -1,58 +1,38 @@
 import React, { useState } from 'react';
-import { Databases, ID, Account } from 'appwrite';
-import { useLocation, } from "react-router-dom";
-import { client, account, databases } from '../../appwriteConfig';
 import BackButton from '../Shared/NavigationButtons/BackButton';
 import SaveNextButton from '../Shared/NavigationButtons/SaveNextButton';
-
-//SaveNextButton required for this component
+import { saveThreeGoodThings } from '../../services/journalService';
 
 interface ThreeGoodThingsProps {
     onNext: () => void;
     onBack: () => void;
-  }
+}
 
-  const ThreeGoodThings: React.FC<ThreeGoodThingsProps> = ({ onNext, onBack }) => {
+const ThreeGoodThings: React.FC<ThreeGoodThingsProps> = ({ onNext, onBack }) => {
     const [goodThing1, setGoodThing1] = useState('');
     const [goodThing2, setGoodThing2] = useState('');
     const [goodThing3, setGoodThing3] = useState('');
     const [isPublic, setIsPublic] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        try {
-            const user = await account.get();
-            if (!user) {
-                console.error("User not logged in");
-                return;
-            }
+    const handleSaveAndNext = async () => {
+        setIsSaving(true);
+        const success = await saveThreeGoodThings(goodThing1, goodThing2, goodThing3, isPublic);
+        setIsSaving(false);
 
-            await databases.createDocument(
-                process.env.VITE_APPWRITE_DATABASE_ID!,
-                process.env.VITE_APPWRITE_GOODTHINGS_COLLECTION_ID!,
-                ID.unique(),
-                {
-                    userId: user.$id,
-                    goodThing1,
-                    goodThing2,
-                    goodThing3,
-                    isPublic,
-                }
-            );
-
-            alert('Good things saved!');
+        if (success) {
             setGoodThing1('');
             setGoodThing2('');
             setGoodThing3('');
-        } catch (error) {
-            console.error('Error saving good things:', error);
-            alert('Error saving good things.');
+            onNext();
+        } else {
+            alert('Error saving your entries. Please try again.');
         }
     };
 
     return (
         <section>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={(e) => e.preventDefault()}>
                 <div>
                     <label>Good Thing 1:</label>
                     <textarea value={goodThing1} onChange={(e) => setGoodThing1(e.target.value)} />
@@ -71,8 +51,8 @@ interface ThreeGoodThingsProps {
                 </div>
             </form>
             <div>
-            <BackButton onClick={onBack} />
-            <SaveNextButton onClick={onNext} text="Save & Next"/>
+                <BackButton onClick={onBack} />
+                <SaveNextButton onClick={handleSaveAndNext} disabled={isSaving} />
             </div>
         </section>
     );

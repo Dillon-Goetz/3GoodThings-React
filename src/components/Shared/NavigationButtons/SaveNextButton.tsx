@@ -1,11 +1,17 @@
+// SaveNextButton.tsx
 import React from 'react';
 
-interface SaveNextButtonProps {
+export interface SaveNextButtonProps {
     onClick: () => void;
+    disabled?: boolean; // added for UX touch to disable the button while saving. 
 }
 
-const SaveNextButton: React.FC<SaveNextButtonProps> = ({ onClick }) => {
-    return <button onClick={onClick}>Save & Next</button>;
+const SaveNextButton: React.FC<SaveNextButtonProps> = ({ onClick, disabled }) => {
+    return (
+        <button onClick={onClick} disabled={disabled}>
+            Save & Next
+        </button>
+    );
 };
 
 export default SaveNextButton;

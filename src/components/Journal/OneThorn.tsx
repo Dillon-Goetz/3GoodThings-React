@@ -1,13 +1,46 @@
-//private and not shared. 
-import React from "react";
 
+import React, { useState } from 'react';
+import BackButton from '../Shared/NavigationButtons/BackButton';
+import SaveNextButton from '../Shared/NavigationButtons/SaveNextButton';
+import { saveOneThorn } from '../../services/journalService';
 
-const OneThorn: React.FC = () => {
+//one thorn is private and not shared. 
+interface OneThornProps {
+    onNext: () => void;
+    onBack: () => void;
+}
+
+const OneThorn: React.FC<OneThornProps> = ({ onNext, onBack }) => {
+    const [OneThorn, setOneThorn] = useState('');
+    const [isSaving, setIsSaving] = useState(false);
+
+    const handleSaveAndNext = async () => {
+        setIsSaving(true);
+        const success = await saveOneThorn(oneThorn);
+        setIsSaving(false);
+
+        if (success) {
+            SetOneThorn('');
+            onNext();
+        } else {
+            alert('Error saving your entries. Please try again.');
+        }
+    };
+
     return (
-      <div>
-        {/* Placeholder content - you can leave this empty for now */}
-      </div>
-    );
-  };
-  
-  export default OneThorn;
+      <section>
+          <form onSubmit={(e) => e.preventDefault()}>
+              <div>
+                  <label>One Thorn:</label>
+                  <textarea value={oneThorn} onChange={(e) => setOneThorn(e.target.value)} />
+              </div>
+          </form>
+          <div>
+              <BackButton onClick={onBack} />
+              <SaveNextButton onClick={handleSaveAndNext} disabled={isSaving} />
+          </div>
+      </section>
+  );
+};
+
+export default OneThorn;
