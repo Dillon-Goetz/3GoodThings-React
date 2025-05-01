@@ -53,7 +53,7 @@ export const saveOneThorn = async (thorn: string) => {
             ID.unique(),
             {
                 userId: user.$id,
-                thornText,
+                thornText, //what is this?
                 isPublic:false,
                 createdAt: new Date().toISOString(),
             }
@@ -72,4 +72,4 @@ export const saveJournalEntry = async (entryText: string) => {
 export const saveAddPhoto = async (photoUrl: string) => {
     // same pattern
 }
-// etc...
+// etc....
