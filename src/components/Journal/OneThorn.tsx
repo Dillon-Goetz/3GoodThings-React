@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import BackButton from '../Shared/NavigationButtons/BackButton';
 import SaveNextButton from '../Shared/NavigationButtons/SaveNextButton';
+import SkipButton from '../Shared/NavigationButtons/SkipButton';
 import { saveOneThorn } from '../../services/journalService';
 
 //one thorn is private and not shared. 
@@ -32,12 +33,13 @@ const OneThorn: React.FC<OneThornProps> = ({ onNext, onBack }) => {
           <form onSubmit={(e) => e.preventDefault()}>
               <div>
                   <label>One Thorn:</label>
-                  <textarea value={oneThorn} onChange={(e) => setOneThorn(e.target.value)} />
+                  <textarea value={'one thorn..'} onChange={(e) => setOneThorn(e.target.value)} />
               </div>
           </form>
           <div>
               <BackButton onClick={onBack} />
               <SaveNextButton onClick={handleSaveAndNext} disabled={isSaving} />
+              <SkipButton onClick={onNext} disabled={isSaving} /> {/* Skip button to go to next step */}
           </div>
       </section>
   );
