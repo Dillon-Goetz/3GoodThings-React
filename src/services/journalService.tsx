@@ -66,7 +66,26 @@ export const saveOneThorn = async (thorn: string) => {
 };
 
 export const saveJournalEntry = async (entryText: string) => {
-    // same pattern
+    const user = await getCurrentUser();
+    if (!user) return false;
+
+    try {
+        await databases.createDocument(
+            databaseId,
+            goodThingsCollectionId,
+            ID.unique(),
+            {
+                userId: user.$id,
+                journalText, //what is this?
+                isPublic:false,
+                createdAt: new Date().toISOString(),
+            }
+        );
+        return true;
+    } catch (error) {
+        console.error("Error saving Three Good Things:", error);
+        return false;
+    }
 };
 
 export const saveAddPhoto = async (photoUrl: string) => {

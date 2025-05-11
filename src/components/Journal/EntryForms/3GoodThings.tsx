@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import BackButton from '../Shared/NavigationButtons/BackButton';
-import SaveNextButton from '../Shared/NavigationButtons/SaveNextButton';
-import { saveThreeGoodThings } from '../../services/journalService';
+import BackButton from '../../Shared/NavigationButtons/BackButton';
+import SaveNextButton from '../../Shared/NavigationButtons/SaveNextButton';
+import { saveThreeGoodThings } from '../../../services/journalService'; // Import the service to save the three good things
 
 interface ThreeGoodThingsProps {
     onNext: () => void;
