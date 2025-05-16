@@ -1,7 +1,7 @@
 // src/components/auth/Signup.tsx
 import React, { useState } from "react";
 import { ID, Models } from "appwrite";
-import { account } from "../../../../appwriteConfig"; //
+import { account } from "../../appwriteConfig"; //
 
 interface SignupProps {
   onLoginSuccess: (user: Models.User<Models.Preferences>) => void;

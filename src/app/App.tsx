@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Routes, Route, useNavigate, Navigate } from 'react-router-dom';
-import AuthPage from './components/Features/auth/components/AuthPage';
-import JournalHome from './components/Journal/JournalHome';
-import ProfileDashboard from './components/Profile/ProfileDashboard';
-import './App.css';
-import './style.css';
-import Header from './components/Shared/Header/Header';
+import AuthPage from './Auth/AuthPage';
+import JournalHome from '../components/Journal/JournalHome';
+import ProfileDashboard from '../components/Profile/ProfileDashboard';
+import './App.css'
+import '../style.css'
+import Header from '../components/Shared/Header/Header';
 
 const App: React.FC = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);

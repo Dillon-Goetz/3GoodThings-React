@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Models } from "appwrite";
-import { account } from "../../../../appwriteConfig"; //
+import { account } from "../../appwriteConfig"; //
 
 interface LoginProps {
   onLoginSuccess: (user: Models.User<Models.Preferences>) => void;
