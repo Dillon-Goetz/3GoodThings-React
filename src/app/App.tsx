@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Routes, Route, useNavigate, Navigate } from 'react-router-dom';
 import AuthPage from './Auth/AuthPage';
-import JournalHome from '../components/Journal/JournalHome';
+import JournalHome from './routes/journal/JournalHome';
 import ProfileDashboard from '../components/Profile/ProfileDashboard';
 import './App.css'
 import '../style.css'
