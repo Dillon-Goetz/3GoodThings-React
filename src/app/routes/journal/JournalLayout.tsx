@@ -1,5 +1,6 @@
+// src/app/routes/journal/JournalLayout.tsx
 import React, { useState, useEffect } from 'react';
-import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom'; // Outlet is key
 import useDailyReset from '../../../Hooks/useDailyReset';
 
 const steps = [
@@ -13,35 +14,37 @@ const steps = [
   'submit-all',
 ];
 
-const JournalLayout: React.FC = () => {
+const JournalLayout: React.FC = () => { // No 'children' prop needed
   const [currentIndex, setCurrentIndex] = useState(0);
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
-  // Sync index with URL
   useEffect(() => {
-    const lastSegment = pathname.split('/').pop() || '';
-    const idx = steps.indexOf(lastSegment);
-    if (idx >= 0) setCurrentIndex(idx);
-  }, [pathname]);
+    const pathSegments = pathname.split('/');
+    const currentStepSlug = pathSegments[pathSegments.length - 1];
+    const idx = steps.indexOf(currentStepSlug);
 
-  // Reset journal data at midnight
+    if (idx !== -1) {
+      setCurrentIndex(idx);
+    } else if (pathname.endsWith('/journal') || pathname.endsWith('/journal/')) {
+      navigate('vibe-check', { replace: true }); // Navigate relative to current /journal context
+    }
+  }, [pathname, navigate]);
+
   useDailyReset(() => {
-    console.log('Resetting journal data...');
-    localStorage.removeItem('journalEntries');
+    console.log('Resetting journal data at midnight (client-side)...');
   });
 
-  const goTo = (i: number, query = '') => {
-    if (i < 0 || i >= steps.length) return;
-    setCurrentIndex(i);
-    navigate(`${steps[i]}${query}`);
+  const goTo = (targetIndex: number, queryParams = '') => {
+    if (targetIndex >= 0 && targetIndex < steps.length) {
+      // Navigate relative to the /journal path
+      navigate(`${steps[targetIndex]}${queryParams}`);
+    }
   };
 
-  // Troubleshoot log to confirm render
-  console.log('JournalLayout rendered');
-
   return (
-    <div>
+    <div className="journal-flow-container">
+      {/* This Outlet will render the matched child route from the <Routes> inside AppRoutes */}
       <Outlet context={{ goTo, currentIndex, lastIndex: steps.length - 1 }} />
     </div>
   );
