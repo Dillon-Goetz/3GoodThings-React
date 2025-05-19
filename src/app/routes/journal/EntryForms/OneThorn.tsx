@@ -1,9 +1,8 @@
-
 import React, { useState } from 'react';
-import BackButton from '../../Shared/NavigationButtons/BackButton';
-import SaveNextButton from '../../Shared/NavigationButtons/SaveNextButton';
-import SkipButton from '../../Shared/NavigationButtons/SkipButton';
-import { saveOneThorn } from '../../../services/journalService';
+import BackButton from '../../../../components/Shared/NavigationButtons/BackButton';
+import SaveNextButton from '../../../../components/Shared/NavigationButtons/SaveNextButton';
+import SkipButton from '../../../../components/Shared/NavigationButtons/SkipButton';
+import { saveOneThorn } from '../../../../services/journalService';
 
 //one thorn is private and not shared. 
 interface OneThornProps {

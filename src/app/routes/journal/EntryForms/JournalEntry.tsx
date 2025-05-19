@@ -1,9 +1,9 @@
 //optional journal session, not required. 
 import React, { useState } from 'react';
-import BackButton from '../../Shared/NavigationButtons/BackButton';
-import SaveNextButton from '../../Shared/NavigationButtons/SaveNextButton';
-import SkipButton from '../../Shared/NavigationButtons/SkipButton';
-import { saveJournalEntry } from '../../../services/journalService';
+import BackButton from '../../../../components/Shared/NavigationButtons/BackButton';
+import SaveNextButton from '../../../../components/Shared/NavigationButtons/SaveNextButton';
+import SkipButton from '../../../../components/Shared/NavigationButtons/SkipButton';
+import { saveJournalEntry } from '../../../../services/journalService';
 
 interface JournalEntryProps {
   onNext: () => void;

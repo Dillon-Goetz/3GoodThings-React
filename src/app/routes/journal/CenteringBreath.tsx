@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, } from "react-router-dom";
-import BackButton from '../Shared/NavigationButtons/BackButton';
-import NextButton from '../Shared/NavigationButtons/SkipButton'; // Import SaveNextButton
+import BackButton from "../../../components/Shared/NavigationButtons/BackButton";
+import NextButton from "../../../components/Shared/NavigationButtons/SkipButton";
+
 
 // Back and Next button required for this component 
 interface CenteringBreathProps {

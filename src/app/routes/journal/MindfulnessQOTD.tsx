@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import BackButton from '../Shared/NavigationButtons/BackButton';
-import NextButton from "../Shared/NavigationButtons/SkipButton";
+import BackButton from "../../../components/Shared/NavigationButtons/BackButton";
+import NextButton from "../../../components/Shared/NavigationButtons/SaveNextButton"; 
 
 interface MindfulnessQOTDProps {
     onNext: () => void;

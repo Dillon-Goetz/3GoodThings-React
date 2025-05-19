@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { account } from '../../appwriteConfig';
+import { account } from "../../../appwriteConfig";
 
 interface VibeCheckProps {
     onNext: (vibe: string) => void;
