@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Routes, Route, useNavigate, Navigate } from 'react-router-dom';
 import AuthPage from './Auth/AuthPage';
-import JournalHome from './routes/journal/JournalHome';
+import JournalLayout from './routes/journal/JournalLayout';
 import ProfileDashboard from '../components/Profile/ProfileDashboard';
 import './App.css'
 import '../style.css'
@@ -40,7 +40,7 @@ const App: React.FC = () => {
                             }}
                         />
                     ) : (
-                        <JournalHome />
+                        <JournalLayout />
                     )} 
                 />
                 <Route 
@@ -60,7 +60,7 @@ const App: React.FC = () => {
                     )} 
                 />
                 {/* This handles all Journal-related routes */}
-                <Route path="/journal/*" element={<JournalHome />} />
+                <Route path="/journal/*" element={<JournalLayout />} />
                 <Route path="/profile" element={<ProfileDashboard />} />  {/* Profile route */}
             </Routes>
         </div>
