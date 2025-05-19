@@ -1,47 +1,56 @@
-//optional journal session, not required. 
 import React, { useState } from 'react';
+import { useOutletContext } from 'react-router-dom';
 import BackButton from '../../../../components/Shared/NavigationButtons/BackButton';
 import SaveNextButton from '../../../../components/Shared/NavigationButtons/SaveNextButton';
 import SkipButton from '../../../../components/Shared/NavigationButtons/SkipButton';
 import { saveJournalEntry } from '../../../../services/journalService';
 
-interface JournalEntryProps {
-  onNext: () => void;
-  onBack: () => void;
+interface OutletContextType {
+  goTo: (i: number) => void;
+  currentIndex: number;
+  lastIndex: number;
 }
 
-const JournalEntry: React.FC<JournalEntryProps> = ({ onNext, onBack }) => {
-    const [OneThorn, setOneThorn] = useState('');
-    const [isSaving, setIsSaving] = useState(false);
-
-    const handleSaveAndNext = async () => {
-        setIsSaving(true);
-        const success = await saveJournalEntry(JournalEntry);
-        setIsSaving(false);
-
-        if (success) {
-            SetJournalEntry('');
-            onNext();
-        } else {
-            alert('Error saving your entries. Please try again.');
-        }
-    };
 const JournalEntry: React.FC = () => {
+  const { goTo, currentIndex } = useOutletContext<OutletContextType>();
+
+  const [journalEntry, setJournalEntry] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSaveAndNext = async () => {
+    setIsSaving(true);
+    const success = await saveJournalEntry(journalEntry);
+    setIsSaving(false);
+
+    if (success) {
+      setJournalEntry('');
+      goTo(currentIndex + 1);
+    } else {
+      alert('Error saving your entries. Please try again.');
+    }
+  };
+
   return (
     <section>
-        <form onSubmit={(e) => e.preventDefault()}>
-            <div>
-                <label>One Thorn:</label>
-                <textarea value={'one thorn..'} onChange={(e) => setOneThorn(e.target.value)} />
-            </div>
-        </form>
+      <form onSubmit={(e) => e.preventDefault()}>
         <div>
-            <BackButton onClick={onBack} />
-            <SaveNextButton onClick={handleSaveAndNext} disabled={isSaving} />
-            <SkipButton onClick={onNext} disabled={isSaving} /> {/* Skip button to go to next step */}
+          <label htmlFor="journal-entry-textarea">Journal Entry:</label>
+          <textarea
+            id="journal-entry-textarea"
+            value={journalEntry}
+            placeholder="Write your journal entry here..."
+            onChange={(e) => setJournalEntry(e.target.value)}
+            rows={6}
+          />
         </div>
+      </form>
+      <div>
+        <BackButton onClick={() => goTo(currentIndex - 1)} />
+        <SaveNextButton onClick={handleSaveAndNext} disabled={isSaving || !journalEntry.trim()} />
+        <SkipButton onClick={() => goTo(currentIndex + 1)} />
+      </div>
     </section>
-        );
-  };
+  );
 };
-  export default JournalEntry;
+
+export default JournalEntry;

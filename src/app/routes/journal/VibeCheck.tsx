@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { account } from "../../../appwriteConfig";
+import { useOutletContext, useSearchParams } from "react-router-dom";
 
-interface VibeCheckProps {
-    onNext: (vibe: string) => void;
+interface JournalContext {
+    goTo: (i: number, query?: string) => void;
+    currentIndex: number;
+    lastIndex: number;
 }
 
-const VibeCheck: React.FC<VibeCheckProps> = ({ onNext }) => {
+const VibeCheck = () => {
     const [welcomeMessage, setWelcomeMessage] = useState("Welcome!");
+    const { goTo, currentIndex } = useOutletContext<JournalContext>();
+    const [, setSearchParams] = useSearchParams(); // Optional if you want to pass `vibe` as query param
 
     useEffect(() => {
         const fetchUserName = async () => {
@@ -25,7 +29,9 @@ const VibeCheck: React.FC<VibeCheckProps> = ({ onNext }) => {
     }, []);
 
     const handleVibeSelection = (vibe: string) => {
-        onNext(vibe); // Pass the selected vibe to the parent component
+        // Optional: save to search params or localStorage if needed
+        setSearchParams({ vibe });
+        goTo(currentIndex + 1, `?vibe=${vibe}`);
     };
 
     return (
