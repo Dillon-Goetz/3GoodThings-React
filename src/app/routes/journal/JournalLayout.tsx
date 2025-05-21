@@ -1,8 +1,9 @@
 // src/app/routes/journal/JournalLayout.tsx
 import React, { useState, useEffect } from 'react';
-import { Outlet, useNavigate, useLocation } from 'react-router-dom'; // Outlet is key
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import useDailyReset from '../../../Hooks/useDailyReset';
 
+// Using your original 'steps' array structure
 const steps = [
   'vibe-check',
   'centering-breath',
@@ -14,38 +15,51 @@ const steps = [
   'submit-all',
 ];
 
-const JournalLayout: React.FC = () => { // No 'children' prop needed
-  const [currentIndex, setCurrentIndex] = useState(0);
+const JournalLayout: React.FC = () => {
   const navigate = useNavigate();
-  const { pathname } = useLocation();
+  const location = useLocation(); // { pathname: "/journal/vibe-check", ... }
+
+  const [currentStepIndex, setCurrentStepIndex] = useState<number>(0);
 
   useEffect(() => {
-    const pathSegments = pathname.split('/');
-    const currentStepSlug = pathSegments[pathSegments.length - 1];
-    const idx = steps.indexOf(currentStepSlug);
+    const pathSegments = location.pathname.split('/'); // ["", "journal", "vibe-check"]
+    const currentPathSlug = pathSegments[pathSegments.length - 1]; // "vibe-check"
 
-    if (idx !== -1) {
-      setCurrentIndex(idx);
-    } else if (pathname.endsWith('/journal') || pathname.endsWith('/journal/')) {
-      navigate('vibe-check', { replace: true }); // Navigate relative to current /journal context
+    const foundIndex = steps.indexOf(currentPathSlug);
+
+    if (foundIndex !== -1) {
+      setCurrentStepIndex(foundIndex);
+    } else if (location.pathname === '/journal' || location.pathname === '/journal/') {
+      // If at base /journal, navigate to the first step (relative to /journal)
+      navigate(steps[0], { replace: true });
     }
-  }, [pathname, navigate]);
+    // If currentPathSlug is not in 'steps' and not at '/journal', it's an invalid journal step.
+    // The routing in App.tsx (specifically the "journal/*" part) should ideally handle this.
+    // For example, the nested <Route path="*" element={<Navigate to="vibe-check" replace />} />
+    // within the journal routes in App.tsx (as per my earlier suggestion) would catch this.
+  }, [location.pathname, navigate]);
 
   useDailyReset(() => {
-    console.log('Resetting journal data at midnight (client-side)...');
+    console.log('Resetting journal data (client-side)...');
   });
 
-  const goTo = (targetIndex: number, queryParams = '') => {
+  const goToStep = (targetIndex: number, queryParams: string = '') => {
     if (targetIndex >= 0 && targetIndex < steps.length) {
-      // Navigate relative to the /journal path
+      // Navigate to the path slug from the 'steps' array.
+      // This navigation is relative within the /journal/* context.
       navigate(`${steps[targetIndex]}${queryParams}`);
     }
   };
 
   return (
     <div className="journal-flow-container">
-      {/* This Outlet will render the matched child route from the <Routes> inside AppRoutes */}
-      <Outlet context={{ goTo, currentIndex, lastIndex: steps.length - 1 }} />
+      <Outlet
+        context={{
+          goTo: goToStep,
+          currentIndex: currentStepIndex,
+          lastIndex: steps.length - 1,
+        }}
+      />
     </div>
   );
 };

@@ -11,7 +11,7 @@ interface OutletContextType {
   lastIndex: number;
 }
 
-const JournalEntry: React.FC = () => {
+const JournalTextEntry: React.FC = () => {
   const { goTo, currentIndex } = useOutletContext<OutletContextType>();
 
   const [journalEntry, setJournalEntry] = useState('');
@@ -53,4 +53,4 @@ const JournalEntry: React.FC = () => {
   );
 };
 
-export default JournalEntry;
+export default JournalTextEntry;

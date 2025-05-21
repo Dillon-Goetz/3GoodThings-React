@@ -2,15 +2,16 @@ import React, { useState, useEffect } from "react";
 import { account } from "../../../appwriteConfig";
 import { useOutletContext, useSearchParams } from "react-router-dom";
 
-interface JournalContext {
-    goTo: (i: number, query?: string) => void;
+interface OutletContext {
+    goTo: (index: number, query?: string) => void;
     currentIndex: number;
     lastIndex: number;
-}
+  }
+  
 
 const VibeCheck = () => {
     const [welcomeMessage, setWelcomeMessage] = useState("Welcome!");
-    const { goTo, currentIndex } = useOutletContext<JournalContext>();
+    const { goTo, currentIndex } = useOutletContext<OutletContext>();
     const [, setSearchParams] = useSearchParams(); // Optional if you want to pass `vibe` as query param
 
     useEffect(() => {
