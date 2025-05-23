@@ -6,7 +6,6 @@ const databaseId = import.meta.env.VITE_APPWRITE_DATABASE;
 const goodThingsCollectionId = import.meta.env.VITE_APPWRITE_GOODTHINGS_COLLECTION_ID;
 const OneThornCollectionId = import.meta.env.VITE_APPWRITE_ONETHORN_COLLECTION_ID;
 const journalCollectionId = import.meta.env.VITE_APPWRITE_JOURNAL_COLLECTION_ID;
-// Add other collection IDs here as needed...
 
 export const getCurrentUser = async () => {
     try {
@@ -42,7 +41,6 @@ export const saveThreeGoodThings = async (goodThing1: string, goodThing2: string
     }
 };
 
-// Future add-ons:
 export const saveOneThorn = async (thorn: string) => {
     const user = await getCurrentUser();
     if (!user) return false;
@@ -50,18 +48,18 @@ export const saveOneThorn = async (thorn: string) => {
     try {
         await databases.createDocument(
             databaseId,
-            goodThingsCollectionId,
+            OneThornCollectionId, // Fixed: use correct collection ID
             ID.unique(),
             {
                 userId: user.$id,
-                thornText, //what is this?
-                isPublic:false,
+                thornText: thorn, // Fixed: use the parameter name
+                isPublic: false,
                 createdAt: new Date().toISOString(),
             }
         );
         return true;
     } catch (error) {
-        console.error("Error saving Three Good Things:", error);
+        console.error("Error saving One Thorn:", error);
         return false;
     }
 };
@@ -73,23 +71,43 @@ export const saveJournalEntry = async (entryText: string) => {
     try {
         await databases.createDocument(
             databaseId,
-            goodThingsCollectionId,
+            journalCollectionId, // Fixed: use correct collection ID
             ID.unique(),
             {
                 userId: user.$id,
-                journalText, //what is this?
-                isPublic:false,
+                journalText: entryText, // Fixed: use the parameter name
+                isPublic: false,
                 createdAt: new Date().toISOString(),
             }
         );
         return true;
     } catch (error) {
-        console.error("Error saving Three Good Things:", error);
+        console.error("Error saving Journal Entry:", error);
         return false;
     }
 };
 
 export const saveAddPhoto = async (photoUrl: string) => {
-    // same pattern
-}
-// etc....
+    const user = await getCurrentUser();
+    if (!user) return false;
+
+    try {
+        // define a photo collection ID!!
+        const photoCollectionId = import.meta.env.VITE_APPWRITE_PHOTO_COLLECTION_ID;
+        
+        await databases.createDocument(
+            databaseId,
+            photoCollectionId,
+            ID.unique(),
+            {
+                userId: user.$id,
+                photoUrl,
+                createdAt: new Date().toISOString(),
+            }
+        );
+        return true;
+    } catch (error) {
+        console.error("Error saving Photo:", error);
+        return false;
+    }
+};
