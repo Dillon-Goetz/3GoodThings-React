@@ -20,7 +20,7 @@ const AuthPage = ({ mode, toggleMode, onLoginSuccess }: AuthPageProps) => {
         const user = await account.get();
         onLoginSuccess(user);  // If already logged in, pass user to parent
       } catch (err) {
-        // No session found, so allow login or signup
+        // No session found, so allow login or signup (remove before launch)
         console.log("No active session found.");
       }
     };
