@@ -6,18 +6,19 @@ import CenteringBreath from './journal/CenteringBreath';
 import MindfulnessQOTD from './journal/MindfulnessQOTD';
 import ThreeGoodThings from './journal/EntryForms/3GoodThings';
 import OneThorn from './journal/EntryForms/OneThorn';
-// Ensure this is the correct export name from your JournalEntry.tsx file
 import JournalTextEntry from './journal/EntryForms/JournalEntry';
 import AddPhoto from './journal/AddPhoto';
 import SubmitAll from './journal/SubmitAll';
-// This component will now define routes RELATIVE to the path it's rendered on (which will be /journal/*)
 
 const AppRoutes = () => {
   return (
-    // JournalLayout will provide the common UI and the <Outlet /> for these steps
-      <Routes>
-        {/* 'index' means this route matches when the path is exactly what JournalLayout is rendered for (e.g. /journal/) */}
+    <Routes>
+      {/* JournalLayout acts as the parent route with nested routes */}
+      <Route path="/" element={<JournalLayout />}>
+        {/* Index route - redirects to vibe-check when path is exactly /journal */}
         <Route index element={<Navigate to="vibe-check" replace />} />
+        
+        {/* All the journal step routes as children */}
         <Route path="vibe-check" element={<VibeCheck />} />
         <Route path="centering-breath" element={<CenteringBreath />} />
         <Route path="mindfulness-qotd" element={<MindfulnessQOTD />} />
@@ -26,9 +27,12 @@ const AppRoutes = () => {
         <Route path="journal-entry" element={<JournalTextEntry />} />
         <Route path="add-photo" element={<AddPhoto />} />
         <Route path="submit-all" element={<SubmitAll />} />
-        {/* Optional: A fallback within the journal section if a sub-path is wrong */}
+        
+        {/* Fallback for any unmatched paths within journal */}
         <Route path="*" element={<Navigate to="vibe-check" replace />} />
-      </Routes>
+      </Route>
+    </Routes>
   );
 }
+
 export default AppRoutes;

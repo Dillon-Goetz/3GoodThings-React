@@ -20,7 +20,7 @@ const MindfulnessQOTD = () => {
     <section>
       <h2>Today's Quotation</h2>
       <p>{quote}</p>
-      <span>- {author}</span>
+      <span>- {author}</span><br></br>
       <BackButton onClick={() => goTo(currentIndex - 1)} />
       <NextButton onClick={() => goTo(currentIndex + 1)} text="Next" />
     </section>

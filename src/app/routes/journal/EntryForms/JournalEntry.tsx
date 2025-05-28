@@ -38,7 +38,7 @@ const JournalTextEntry: React.FC = () => {
           <textarea
             id="journal-entry-textarea"
             value={journalEntry}
-            placeholder="Write your journal entry here..."
+            placeholder="Optional: Write your journal entry here..."
             onChange={(e) => setJournalEntry(e.target.value)}
             rows={6}
           />

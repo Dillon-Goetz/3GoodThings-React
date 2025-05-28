@@ -1,33 +1,66 @@
-// src/app/routes/index.tsx
-import { Routes, Route, Navigate } from 'react-router-dom';
-import JournalLayout from '../journal/JournalLayout';
-import VibeCheck from '../journal/VibeCheck';
-import CenteringBreath from '../journal/CenteringBreath';
-import MindfulnessQOTD from '../journal/MindfulnessQOTD';
-import ThreeGoodThings from '../journal/EntryForms/3GoodThings';
-import OneThorn from '../journal/EntryForms/OneThorn';
-import JournalTextEntry from '../journal/EntryForms/JournalEntry';
-import AddPhoto from '../journal/AddPhoto';
-import SubmitAll from '../journal/SubmitAll';
+// src/app/routes/journal/JournalLayout.tsx
+import React, { useState, useEffect } from 'react';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 
-const AppRoutes = () => {
-  return (
-    <Routes>
-      {/* JournalLayout acts as the parent route with nested routes */}
-      <Route path="/" element={<JournalLayout />}>
-        <Route index element={<Navigate to="vibe-check" replace />} />
-        <Route path="vibe-check" element={<VibeCheck />} />
-        <Route path="centering-breath" element={<CenteringBreath />} />
-        <Route path="mindfulness-qotd" element={<MindfulnessQOTD />} />
-        <Route path="3-good-things" element={<ThreeGoodThings />} />
-        <Route path="one-thorn" element={<OneThorn />} />
-        <Route path="journal-entry" element={<JournalTextEntry />} />
-        <Route path="add-photo" element={<AddPhoto />} />
-        <Route path="submit-all" element={<SubmitAll />} />
-        <Route path="*" element={<Navigate to="vibe-check" replace />} />
-      </Route>
-    </Routes>
-  );
+interface OutletContext {
+  goTo: (index: number, query?: string) => void;
+  currentIndex: number;
+  lastIndex: number;
 }
 
-export default AppRoutes;
+const JournalLayout: React.FC = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Define the journal steps in order
+  const journalSteps = [
+    'vibe-check',
+    'centering-breath', 
+    'mindfulness-qotd',
+    '3-good-things',
+    'one-thorn',
+    'journal-entry',
+    'add-photo',
+    'submit-all'
+  ];
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  // Update currentIndex based on current location
+  useEffect(() => {
+    const pathSegments = location.pathname.split('/');
+    const currentPath = pathSegments[pathSegments.length - 1] || 'vibe-check';
+    const index = journalSteps.indexOf(currentPath);
+    if (index !== -1) {
+      setCurrentIndex(index);
+    }
+  }, [location.pathname]);
+
+  const goTo = (index: number, query?: string) => {
+    if (index >= 0 && index < journalSteps.length) {
+      const path = `/journal/${journalSteps[index]}`;
+      navigate(path + (query || ''));
+      setCurrentIndex(index);
+    }
+  };
+
+  const outletContext: OutletContext = {
+    goTo,
+    currentIndex,
+    lastIndex: journalSteps.length - 1
+  };
+
+  return (
+    <div className="journal-layout">
+      {/* Optional: Add progress indicator */}
+      <div className="progress-indicator">
+        Step {currentIndex + 1} of {journalSteps.length}
+      </div>
+      
+      {/* This is where the child routes render */}
+      <Outlet context={outletContext} />
+    </div>
+  );
+};
+
+export default JournalLayout;

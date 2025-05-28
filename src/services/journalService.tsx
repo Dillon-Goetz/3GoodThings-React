@@ -5,7 +5,7 @@ import { ID } from 'appwrite';
 const databaseId = import.meta.env.VITE_APPWRITE_DATABASE;
 const goodThingsCollectionId = import.meta.env.VITE_APPWRITE_GOODTHINGS_COLLECTION_ID;
 const OneThornCollectionId = import.meta.env.VITE_APPWRITE_ONETHORN_COLLECTION_ID;
-const journalCollectionId = import.meta.env.VITE_APPWRITE_JOURNAL_COLLECTION_ID;
+const journalCollectionId = import.meta.env.VITE_APPWRITE_JOURNALENTRY_COLLECTION_ID
 
 export const getCurrentUser = async () => {
     try {
