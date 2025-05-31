@@ -13,16 +13,16 @@ const JournalLayout: React.FC = () => {
   const location = useLocation();
 
   // Define the journal steps in order
-  const journalSteps = [
-    'vibe-check',
-    'centering-breath', 
-    'mindfulness-qotd',
-    '3-good-things',
-    'one-thorn',
-    'journal-entry',
-    'add-photo',
-    'submit-all'
-  ];
+const journalSteps = [
+  'vibe-check',
+  'centering-breath',
+  'mindfulness-qotd',
+  '3-good-things',
+  'add-photo',
+  'one-thorn',
+  'journal-entry',
+  'submit-all'
+];
 
   const [currentIndex, setCurrentIndex] = useState(0);
 

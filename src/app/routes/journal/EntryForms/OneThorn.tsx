@@ -33,11 +33,12 @@ const OneThorn: React.FC = () => {
     <section>
       <form onSubmit={(e) => e.preventDefault()}>
         <div>
+          <p>Not all days are created equal, want to share one thorn?</p>
           <label htmlFor="one-thorn-textarea">One Thorn:</label>
           <textarea
             id="one-thorn-textarea"
             value={oneThorn}
-            placeholder="one thorn.."
+            placeholder="Optional: one thorn.."
             onChange={(e) => setOneThorn(e.target.value)}
             rows={5}
           />
