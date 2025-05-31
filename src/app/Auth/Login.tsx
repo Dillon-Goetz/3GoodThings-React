@@ -6,7 +6,7 @@ interface LoginProps {
   onLoginSuccess: (user: Models.User<Models.Preferences>) => void;
 }
 
-function Login({ onLoginSuccess }: LoginProps) {
+const Login = ({ onLoginSuccess }: LoginProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -14,11 +14,16 @@ function Login({ onLoginSuccess }: LoginProps) {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    console.log("Login.tsx: Attempting login with email:", email); // DEBUG
 
     try {
       await account.createEmailPasswordSession(email, password);
+      console.log("Login.tsx: createEmailPasswordSession successful."); // DEBUG
+
       const user = await account.get();
+      console.log("Login.tsx: account.get() after session creation:", user); // DEBUG
       onLoginSuccess(user);
+
     } catch (error) {
       console.error("Login error:", error);
       setError("Failed to log in. Please check your credentials.");

@@ -36,11 +36,14 @@ const App: React.FC = () => {
   };
 
   const handleLoginSuccess = (user: Models.User<Models.Preferences>) => {
+    console.log("App.tsx: handleLoginSuccess - START. User name:", user.name); // LOG 1
     setIsLoggedIn(true);
     setCurrentUser(user);
+    console.log("App.tsx: handleLoginSuccess - State updated. isLoggedIn should be true."); // LOG 2
     const origin = location.state?.from?.pathname || '/journal';
+    console.log("App.tsx: handleLoginSuccess - Navigating to:", origin); // LOG 3
     navigate(origin, { replace: true });
-  };
+};
 
   const handleLogout = async () => {
     try {

@@ -16,7 +16,7 @@ const ThreeGoodThings: React.FC = () => {
   const [goodThing1, setGoodThing1] = useState('');
   const [goodThing2, setGoodThing2] = useState('');
   const [goodThing3, setGoodThing3] = useState('');
-  const [isPublic, setIsPublic] = useState(false);
+  const [isPublic, setIsPublic] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
   const handleSaveAndNext = async () => {
