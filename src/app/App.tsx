@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, useNavigate, Navigate, useLocation } from 'react-router-dom';
 import AuthPage from './Auth/AuthPage';
-import ProfileDashboard from './routes/profile/ProfileDashboard';
+import ProfileDashboard from './routes/profile/Dashboard/ProfileDashboard';
 import LoggedInLayout from '../components/Layouts/LoggedInLayout';
 import AppRoutes from './routes/index';
 import { account } from '../appwriteConfig';
