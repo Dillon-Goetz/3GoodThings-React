@@ -36,6 +36,7 @@ const ThreeGoodThings: React.FC = () => {
 
   return (
     <section>
+      <p>Think back and share your three good things of the day</p>
       <form onSubmit={(e) => e.preventDefault()}>
         <div>
           <label>Good Thing 1:</label>
