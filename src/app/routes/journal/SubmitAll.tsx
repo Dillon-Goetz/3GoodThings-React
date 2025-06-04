@@ -1,13 +1,20 @@
-//submit all forms, create post option with 3GoodThings and Photo.
-import React from "react";
-
+// src/app/routes/journal/SubmitAll.tsx
+import React from 'react';
+import { Link } from 'react-router-dom';
+// import { Button } from '@/components/ui/button'; // Optional: for styling the link as a button
 
 const SubmitAll: React.FC = () => {
-    return (
-      <div>
-        {/* Placeholder content - you can leave this empty for now */}
-      </div>
-    );
-  };
-  
-  export default SubmitAll;
+  return (
+    <section style={{ textAlign: 'center', padding: '40px' }}>
+      <h2>Done!</h2>
+      <p style={{ margin: '20px 0' }}>
+        Your Daily Mindfull practice is complete!
+      </p>
+      <Link to="/profile">
+        <Button>Go to My Dashboard</Button>
+      </Link>
+    </section>
+  );
+};
+
+export default SubmitAll;
