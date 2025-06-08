@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { useDailyJournalProgress, JournalCompletionStatus } from '@/hooks/useDailyJournalProgress'; // Or your path to the hook
+import { useDailyJournalProgress, JournalCompletionStatus }from '../../../../Hooks/useDailyJournalProgress' // Or your path to the hook
 import RecentPostsDisplay from './components/RecentPostsDisplay'; // Import the new component
 
 const ProfileDashboard: React.FC = () => { // Or Dashboard: React.FC

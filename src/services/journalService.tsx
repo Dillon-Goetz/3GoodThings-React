@@ -111,3 +111,40 @@ export const saveAddPhoto = async (photoUrl: string) => {
         return false;
     }
 };
+
+export const getAllJournalDataForUser = async () => {
+    const user = await getCurrentUser();
+    if (!user) throw new Error("No user logged in");
+
+    const collectionsToFetch = [
+        { id: goodThingsCollectionId, key: 'threeGoodThings' },
+        { id: OneThornCollectionId, key: 'oneThorn' },
+        { id: journalCollectionId, key: 'journalEntries' }
+    ];
+
+    const data: { [key: string]: any[] } = {
+        threeGoodThings: [],
+        oneThorn: [],
+        journalEntries: []
+    };
+    
+    for (const collection of collectionsToFetch) {
+        if (collection.id) {
+            try {
+                const response = await databases.listDocuments(
+                    databaseId,
+                    collection.id,
+                    [
+                        Query.equal('userId', user.$id),
+                        Query.orderDesc('createdAt'),
+                        Query.limit(100) // Fetch up to 100 of each type
+                    ]
+                );
+                data[collection.key] = response.documents;
+            } catch (error) {
+                console.error(`Error fetching from ${collection.key}:`, error);
+            }
+        }
+    }
+    return data;
+};
