@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import Header from '../Shared/Header/Header'; // Import your Header component
+import Header from '../Shared/Header/Header';
 
 interface LoggedInLayoutProps {
   onLogout: () => void;
@@ -8,7 +8,9 @@ interface LoggedInLayoutProps {
 
 const LoggedInLayout: React.FC<LoggedInLayoutProps> = ({ onLogout }) => {
   return (
-    <div>
+    // We wrap everything in a div with our new background style
+    // 'min-h-screen' ensures it covers the full height of the screen
+    <div className="min-h-screen bg-gradient-to-b from-blue-900 to-indigo-950 text-white">
       <Header onLogout={onLogout} />
       <main>
         <Outlet /> {/* Renders the child route components */}

@@ -182,5 +182,6 @@ button:focus-visible {
   }
   body {
     @apply bg-background text-foreground;
+    /* @apply min-h-screen flex items-center justify-center; */
   }
 }

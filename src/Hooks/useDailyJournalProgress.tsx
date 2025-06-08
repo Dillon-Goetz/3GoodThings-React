@@ -9,7 +9,7 @@ const databaseId = import.meta.env.VITE_APPWRITE_DATABASE;
 const goodThingsCollectionId = import.meta.env.VITE_APPWRITE_GOODTHINGS_COLLECTION_ID;
 const oneThornCollectionId = import.meta.env.VITE_APPWRITE_ONETHORN_COLLECTION_ID;
 const journalCollectionId = import.meta.env.VITE_APPWRITE_JOURNALENTRY_COLLECTION_ID;
-const photoCollectionId = import.meta.env.VITE_APPWRITE_IMAGESTORAGE_ID; // Used in saveAddPhoto
+const photoCollectionId = import.meta.env.VITE_APPWRITE_PHOTO_COLLECTION_ID; // Used in saveAddPhoto
 
 export type JournalCompletionStatus = 'NONE' | 'PARTIAL' | 'COMPLETE';
 
