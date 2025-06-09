@@ -51,7 +51,7 @@ const journalSteps = [
   };
 
   return (
-    <div className="journal-layout">
+    <div className="journal-layout flex flex-col items-center min-h-screen">
       {/* Optional: Add progress indicator */}
       <div className="progress-indicator">
         Step {currentIndex + 1} of {journalSteps.length}
