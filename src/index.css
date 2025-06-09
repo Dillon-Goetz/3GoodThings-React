@@ -184,3 +184,78 @@ body {
   @apply min-h-screen;
 }
 }
+/* Theme Toggle Slider Styles */
+.theme-slider-switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.theme-slider-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.theme-slider-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #f39c12; /* Light mode background */
+  transition: .4s;
+}
+
+.theme-slider-slider.round {
+  border-radius: 34px;
+}
+
+input:checked + .theme-slider-slider {
+  background-color: #424242; /* Dark mode background */
+}
+
+/* Slider Knob */
+.slider-knob {
+  position: absolute;
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  border-radius: 50%;
+  transition: .4s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+input:checked + .theme-slider-slider .slider-knob {
+  transform: translateX(26px);
+}
+
+/* Icons within the Knob */
+.slider-knob .sun-icon,
+.slider-knob .moon-icon {
+  position: absolute;
+  color: #2c3e50;
+  transition: opacity 0.2s ease-in-out;
+}
+
+/* Light mode: Show sun, hide moon */
+.slider-knob .sun-icon {
+  opacity: 1;
+}
+.slider-knob .moon-icon {
+  opacity: 0;
+}
+
+/* Dark mode: Hide sun, show moon */
+input:checked + .theme-slider-slider .slider-knob .sun-icon {
+  opacity: 0;
+}
+input:checked + .theme-slider-slider .slider-knob .moon-icon {
+  opacity: 1;
+}

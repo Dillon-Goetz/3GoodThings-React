@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Menu, Moon, Sun } from 'lucide-react';
+import { Menu, Sun, Moon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useTheme } from '@/components/Shared/ThemeProvider'; // Make sure this path is correct
+import { useTheme } from '@/components/Shared/ThemeProvider';
 
 interface HeaderProps {
   onLogout: () => void;
@@ -27,6 +27,11 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
     setIsMenuOpen(false);
   };
 
+  const handleSliderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const isChecked = event.target.checked;
+    setTheme(isChecked ? 'dark' : 'light');
+  };
+
   return (
     <header className="relative p-4 flex justify-between items-center">
       {/* Left side: Menu Icon and Logo */}
@@ -39,30 +44,46 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
         </Link>
       </div>
 
-      {/* Right side: Theme Toggle Button */}
+      {/* Right side: Theme Toggle Slider */}
       <div>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-        >
-          <Sun className="h-6 w-6 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-          <Moon className="absolute h-6 w-6 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-          <span className="sr-only">Toggle theme</span>
-        </Button>
+        <label className="theme-slider-switch">
+          <input
+            type="checkbox"
+            onChange={handleSliderChange}
+            checked={theme === 'dark'}
+          />
+          <span className="theme-slider-slider round">
+            <span className="slider-knob">
+              <Sun className="sun-icon h-5 w-5" />
+              <Moon className="moon-icon h-5 w-5" />
+            </span>
+          </span>
+        </label>
       </div>
 
       {/* Dropdown Menu */}
       {isMenuOpen && (
         <div className="absolute top-16 left-4 w-56 bg-card text-card-foreground rounded-md shadow-lg border z-10">
           <div className="p-2 flex flex-col space-y-1">
-            <Button variant="ghost" className="justify-start" onClick={() => handleNavigate('/profile')}>
+            <Button
+              variant="ghost"
+              className="justify-start"
+              onClick={() => handleNavigate('/profile')}
+            >
               My Dashboard
             </Button>
-            <Button variant="ghost" className="justify-start" onClick={() => handleNavigate('/journal')}>
+            <Button
+              variant="ghost"
+              className="justify-start"
+              onClick={() => handleNavigate('/journal')}
+            >
               Log Today's Entry
             </Button>
-            <Button variant="destructive" className="justify-start mt-2" onClick={handleLogout}>
+            <Button
+              variant="destructive"
+              className="justify-start"
+              onClick={handleLogout}
+            >
               Logout
             </Button>
           </div>
