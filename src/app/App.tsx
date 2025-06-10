@@ -16,6 +16,26 @@ const App: React.FC = () => {
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
   const navigate = useNavigate();
   const location = useLocation();
+  
+  // 1. ADD THE JOURNAL STATE AND HANDLER HERE
+  const [journalData, setJournalData] = useState({
+    threeGoodThings: ['', '', ''],
+    isPublic: true,
+    oneThorn: '',
+    vibe: '',
+    photoFileId: null,
+    isPhotoPublic: true,
+    selectedFile: null as File | null,
+    journalText: '',
+  });
+
+  const handleDataChange = (field: keyof typeof journalData, value: any) => {
+    setJournalData(prevData => ({
+      ...prevData,
+      [field]: value,
+    }));
+  };
+
 
   useEffect(() => {
     const checkSession = async () => {
@@ -36,14 +56,11 @@ const App: React.FC = () => {
   };
 
   const handleLoginSuccess = (user: Models.User<Models.Preferences>) => {
-    console.log("App.tsx: handleLoginSuccess - START. User name:", user.name); // LOG 1
     setIsLoggedIn(true);
     setCurrentUser(user);
-    console.log("App.tsx: handleLoginSuccess - State updated. isLoggedIn should be true."); // LOG 2
     const origin = location.state?.from?.pathname || '/journal';
-    console.log("App.tsx: handleLoginSuccess - Navigating to:", origin); // LOG 3
     navigate(origin, { replace: true });
-};
+  };
 
   const handleLogout = async () => {
     try {
@@ -82,8 +99,13 @@ const App: React.FC = () => {
       <Route
          element={
           isLoggedIn ? (
-            // 1. Pass the currentUser state as a prop here
-            <LoggedInLayout onLogout={handleLogout} currentUser={currentUser} />
+            // 2. PASS THE STATE AND HANDLER DOWN TO LoggedInLayout
+            <LoggedInLayout 
+              onLogout={handleLogout} 
+              currentUser={currentUser}
+              journalData={journalData}
+              onJournalDataChange={handleDataChange}
+            />
         ) : (
             <Navigate to="/login" replace state={{ from: location }} />
         )

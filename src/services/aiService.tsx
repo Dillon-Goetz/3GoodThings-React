@@ -13,9 +13,10 @@ const openAI = new OpenAI({
 
 // Define a type for the combined journal data we'll analyze
 export interface JournalData {
-    threeGoodThings: any[];
-    oneThorn: any[];
-    journalEntries: any[];
+  threeGoodThings: any[]; //
+  oneThorn: any[]; //
+  journalEntries: any[]; //
+  photos: any[]; 
 }
 
 /**

@@ -1,14 +1,18 @@
+// src/app/routes/journal/JournalLayout.tsx
 import React, { useState, useEffect } from 'react';
 import { Outlet, useNavigate, useLocation, useOutletContext } from 'react-router-dom';
 import { Models } from 'appwrite';
 
-// Define the shape of the context from the parent layout (LoggedInLayout)
+// 1. DEFINE THE SHAPE OF THE CONTEXT COMING FROM THE PARENT (LoggedInLayout)
 interface ParentOutletContext {
   user: Models.User<Models.Preferences> | null;
+  journalData: any; // Keep it simple for now
+  onDataChange: (field: string, value: any) => void;
 }
 
 const JournalLayout: React.FC = () => {
-  const { user } = useOutletContext<ParentOutletContext>(); // Get user from parent
+  // 2. GET EVERYTHING FROM THE PARENT'S CONTEXT
+  const { user, journalData, onDataChange } = useOutletContext<ParentOutletContext>();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -17,32 +21,16 @@ const JournalLayout: React.FC = () => {
     'centering-breath',
     'mindfulness-qotd',
     '3-good-things',
-    'add-photo',
     'one-thorn',
     'journal-entry',
+    'add-photo',
     'submit-all'
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // 1. Create a state object to hold all the data for the journal entry
-  const [journalData, setJournalData] = useState({
-    threeGoodThings: ['', '', ''],
-    isPublic: true,
-    oneThorn: '',
-    vibe: '',
-    photoFileId: null,
-    isPhotoPublic: true,
-    selectedFile: null as File | null,
-    journalText: '', // Add this line
-  });
-  // 2. Create a single handler to update any field in the journalData state
-  const handleDataChange = (field: keyof typeof journalData, value: any) => {
-    setJournalData(prevData => ({
-      ...prevData,
-      [field]: value,
-    }));
-  };
+  // 3. REMOVE THE LOCAL journalData STATE AND handleDataChange FUNCTION
+  //    They are now managed by App.tsx
 
   useEffect(() => {
     const pathSegments = location.pathname.split('/');
@@ -59,14 +47,14 @@ const JournalLayout: React.FC = () => {
     }
   };
   
-  // 3. Pass the user, data state, and update function down to the child routes
+  // 4. PASS THE CENTRALIZED STATE DOWN TO THE JOURNAL STEP COMPONENTS
   const outletContext = {
     goTo,
     currentIndex,
     lastIndex: journalSteps.length - 1,
     user,
     journalData,
-    onDataChange: handleDataChange,
+    onDataChange,
   };
 
   return (

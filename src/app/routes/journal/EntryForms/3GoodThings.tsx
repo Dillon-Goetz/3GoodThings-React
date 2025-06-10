@@ -1,6 +1,6 @@
-import React, { useMemo } from 'react'; // Import useMemo for randomization
+import React, { useMemo } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { saveThreeGoodThings } from '../../../../services/journalService';
+
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -20,59 +20,57 @@ interface JournalContextType {
 
 const ThreeGoodThings: React.FC = () => {
   const { goTo, currentIndex, journalData, onDataChange } = useOutletContext<JournalContextType>();
-  const [isSaving, setIsSaving] = React.useState(false);
 
-  // 1. A larger array of potential placeholders
-const allPlaceholders = [
-  "e.g., I enjoyed my morning coffee.",
-  "e.g., A coworker gave me a nice compliment.",
-  "e.g., The weather was beautiful during my walk.",
-  "e.g., I listened to a song I love.",
-  "e.g., I finished a task I was putting off.",
-  "e.g., I had a nice chat with a friend.",
-  "e.g., I learned something new today.",
-  "e.g., I made a healthy meal.",
-  "e.g., I spent some quality time with my pet.",
-  "e.g., I read a chapter of a good book.",
-  "e.g., The satisfying crunch of a good chip.",
-  "e.g., Finding a parking spot right up front.",
-  "e.g., The smell of rain on a hot day.",
-  "e.g., A really good hair day.",
-  "e.g., The feeling of fresh sheets.",
-  "e.g., A perfectly ripe avocado.",
-  "e.g., A meme that made me laugh out loud.",
-  "e.g., The unique weirdness of my pet.",
-  "e.g., That first sip of a cold drink.",
-  "e.g., A stranger who held the door open.",
-  "e.g., The joy of peeling off a protective film.",
-  "e.g., A really satisfying sneeze.",
-  "e.g., The fast-food worker who gave me extra fries.",
-  "e.g., Hitting all green lights on my way home.",
-  "e.g., A surprisingly good movie I stumbled upon.",
-  "e.g., The comfort of my favorite sweatpants.",
-  "e.g., A perfectly timed song on the radio.",
-  "e.g., Finding money I forgot about in a pocket.",
-  "e.g., A baby animal video.",
-  "e.g., The smell of a bookstore.",
-  "e.g., A funny typo in a text message.",
-  "e.g., The satisfaction of unsubscribing from an email list.",
-  "e.g., A cloud that looked like something funny.",
-  "e.g., The cozy sound of a crackling fire.",
-  "e.g., A delicious smell from a stranger's kitchen.",
-  "e.g., Finally remembering that thing I was trying to remember.",
-  "e.g., A really great pen.",
-  "e.g., The feeling of taking off my shoes after a long day.",
-  "e.g., A compliment from an unexpected person.",
-  "e.g., The sheer genius of whoever invented pizza.",
-  "e.g., I pet a dog",
-  "e.g., My cat walked on my keyboard.",
-  "e.g., I gave back to society",
-];
-  // 2. useMemo hook shuffles the array once and picks the first 3.
-  //    This prevents the placeholders from changing every time you type.
+  // KEPT THE FULL ARRAY OF PLACEHOLDERS, AS REQUESTED
+  const allPlaceholders = [
+    "e.g., I enjoyed my morning coffee.",
+    "e.g., A coworker gave me a nice compliment.",
+    "e.g., The weather was beautiful during my walk.",
+    "e.g., I listened to a song I love.",
+    "e.g., I finished a task I was putting off.",
+    "e.g., I had a nice chat with a friend.",
+    "e.g., I learned something new today.",
+    "e.g., I made a healthy meal.",
+    "e.g., I spent some quality time with my pet.",
+    "e.g., I read a chapter of a good book.",
+    "e.g., The satisfying crunch of a good chip.",
+    "e.g., Finding a parking spot right up front.",
+    "e.g., The smell of rain on a hot day.",
+    "e.g., A really good hair day.",
+    "e.g., The feeling of fresh sheets.",
+    "e.g., A perfectly ripe avocado.",
+    "e.g., A meme that made me laugh out loud.",
+    "e.g., The unique weirdness of my pet.",
+    "e.g., That first sip of a cold drink.",
+    "e.g., A stranger who held the door open.",
+    "e.g., The joy of peeling off a protective film.",
+    "e.g., A really satisfying sneeze.",
+    "e.g., The fast-food worker who gave me extra fries.",
+    "e.g., Hitting all green lights on my way home.",
+    "e.g., A surprisingly good movie I stumbled upon.",
+    "e.g., The comfort of my favorite sweatpants.",
+    "e.g., A perfectly timed song on the radio.",
+    "e.g., Finding money I forgot about in a pocket.",
+    "e.g., A baby animal video.",
+    "e.g., The smell of a bookstore.",
+    "e.g., A funny typo in a text message.",
+    "e.g., The satisfaction of unsubscribing from an email list.",
+    "e.g., A cloud that looked like something funny.",
+    "e.g., The cozy sound of a crackling fire.",
+    "e.g., A delicious smell from a stranger's kitchen.",
+    "e.g., Finally remembering that thing I was trying to remember.",
+    "e.g., A really great pen.",
+    "e.g., The feeling of taking off my shoes after a long day.",
+    "e.g., A compliment from an unexpected person.",
+    "e.g., The sheer genius of whoever invented pizza.",
+    "e.g., I pet a dog",
+    "e.g., My cat walked on my keyboard.",
+    "e.g., I gave back to society",
+  ];
+  
   const randomPlaceholders = useMemo(() => {
     return allPlaceholders.sort(() => 0.5 - Math.random()).slice(0, 3);
-  }, []); // The empty array [] means this runs only once when the component first loads.
+  }, []);
 
   const handleChange = (index: number, value: string) => {
     const newThings = [...journalData.threeGoodThings];
@@ -80,25 +78,10 @@ const allPlaceholders = [
     onDataChange('threeGoodThings', newThings);
   };
 
-  const handleSaveAndNext = async () => {
-    setIsSaving(true);
-    const success = await saveThreeGoodThings(
-      journalData.threeGoodThings[0],
-      journalData.threeGoodThings[1],
-      journalData.threeGoodThings[2],
-      journalData.isPublic
-    );
-    setIsSaving(false);
-
-    if (success) {
-      goTo(currentIndex + 1);
-    } else {
-      alert('Error saving your entries. Please try again.');
-    }
+  const handleNext = () => {
+    goTo(currentIndex + 1);
   };
   
-  const areAllThingsFilled = journalData.threeGoodThings.every(thing => thing.trim() !== '');
-
   return (
     <JournalStepLayout
       title="Three Good Things"
@@ -108,8 +91,8 @@ const allPlaceholders = [
           <Button variant="outline" onClick={() => goTo(currentIndex - 1)}>
             Back
           </Button>
-          <Button onClick={handleSaveAndNext} disabled={isSaving || !areAllThingsFilled}>
-            {isSaving ? 'Saving...' : 'Save & Next'}
+          <Button onClick={handleNext}>
+            Next
           </Button>
         </div>
       }
@@ -120,9 +103,8 @@ const allPlaceholders = [
             <Label htmlFor={`good-thing-${index + 1}`}>{index + 1}.</Label>
             <Textarea
               id={`good-thing-${index + 1}`}
-              // 3. Use the unique, randomized placeholder
               placeholder={randomPlaceholders[index]}
-              value={journalData.threeGoodThings[index]}
+              value={journalData.threeGoodThings[index] || ''}
               onChange={(e) => handleChange(index, e.target.value)}
             />
           </div>

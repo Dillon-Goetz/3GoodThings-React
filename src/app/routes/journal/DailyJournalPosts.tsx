@@ -1,62 +1,99 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { databases } from '../../../appwriteConfig'; // Assuming direct import for simplicity
-import PostPreview from '../../../components/Shared/PostPreview';
-import RemainingComponents from '../../../components/Shared/RemainingComponents';
-import { useAuth } from '@/Hooks/useAuth'
+// src/app/routes/journal/DailyJournalPosts.tsx
+import React, { useState, useEffect } from 'react'; //
+import { getAllJournalDataForUser } from '../../../services/journalService'; //
+import { JournalData } from '../../../services/aiService'; //
+import PostPreview from '@/components/Shared/PostPreview'; //
+import RemainingComponents from '@/components/Shared/RemainingComponents'; //
+import { Button } from '@/components/ui/button'; //
+import { Link } from 'react-router-dom'; //
 
-const DailyJournalPosts: React.FC = () => {
-    const { entryId } = useParams<{ entryId: string }>();
-    const { user } = useAuth();
-    const [entry, setEntry] = useState<any>(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+const DailyJournalPosts: React.FC = () => { //
+    const [entries, setEntries] = useState<any[]>([]); //
+    const [loading, setLoading] = useState(true); //
+    const [error, setError] = useState<string | null>(null); //
+    const [expandedEntryId, setExpandedEntryId] = useState<string | null>(null); //
 
-    useEffect(() => {
-        if (!entryId || !user) return;
-
-        const fetchEntry = async () => {
+    useEffect(() => { //
+        const fetchAndProcessData = async () => { //
             try {
-                // This is a simplified fetch, you might want to use your journalService
-                const document = await databases.getDocument(
-                    import.meta.env.VITE_APPWRITE_DATABASE_ID,
-                    import.meta.env.VITE_APPWRITE_COLLECTION_ID,
-                    entryId
-                );
+                const rawData: JournalData = await getAllJournalDataForUser(); //
                 
-                // Security check: ensure the fetched entry belongs to the logged-in user
-                if (document.userId === user.$id) {
-                    setEntry(document);
-                } else {
-                    setError("You do not have permission to view this entry.");
-                }
+                // This logic groups all separate documents by the day they were created
+                const groupedByDay = new Map<string, any>(); //
 
-            } catch (err) {
-                setError("Failed to fetch journal entry.");
-                console.error(err);
+                const processCollection = (collection: any[], type: string) => { //
+                    collection.forEach(doc => { //
+                        const day = new Date(doc.createdAt).toISOString().split('T')[0]; //
+                        if (!groupedByDay.has(day)) { //
+                            groupedByDay.set(day, { createdAt: doc.createdAt, day }); //
+                        }
+                        const dayData = groupedByDay.get(day); //
+                        dayData[type] = doc; //
+                    });
+                };
+
+                processCollection(rawData.threeGoodThings, 'threeGoodThings'); //
+                processCollection(rawData.oneThorn, 'oneThorn'); //
+                processCollection(rawData.journalEntries, 'journalEntry'); //
+                // The photo collection is not processed here
+                
+                const sortedEntries = Array.from(groupedByDay.values()) //
+                    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()); //
+                
+                setEntries(sortedEntries); //
+            } catch (err: any) { //
+                setError(err.message || 'Failed to fetch journal entries.'); //
             } finally {
-                setIsLoading(false);
+                setLoading(false); //
             }
         };
 
-        fetchEntry();
-    }, [entryId, user]);
+        fetchAndProcessData(); //
+    }, []);
 
-    if (isLoading) return <div className="text-center p-8">Loading your entry...</div>;
-    if (error) return <div className="text-center p-8 text-red-500">{error}</div>;
-    if (!entry) return <div className="text-center p-8">Entry not found.</div>;
+    const toggleExpand = (entryId: string) => { //
+        setExpandedEntryId(prevId => (prevId === entryId ? null : entryId)); //
+    };
+
+    if (loading) { //
+        return <div className="text-center p-8">Loading your journal history...</div>; //
+    }
+
+    if (error) { //
+        return <div className="text-center p-8 text-red-500">Error: {error}</div>; //
+    }
+
+    if (entries.length === 0) { //
+        return (
+            <div className="text-center p-8">
+                <h2 className="text-2xl font-bold mb-2">No Entries Yet</h2> //
+                <p className="text-muted-foreground mb-4">You haven't written any journal entries. Start today!</p> //
+                <Button asChild>
+                    <Link to="/journal/vibe-check">Start Today's Entry</Link> //
+                </Button>
+            </div>
+        );
+    }
 
     return (
-        <div className="container mx-auto p-4 md:p-6 max-w-2xl">
-            <h1 className="text-3xl font-bold tracking-tight text-center mb-6">Your Entry for {new Date(entry.$createdAt).toLocaleDateString()}</h1>
-            
-            {/* Part 1: The reusable "social media" preview */}
-            <PostPreview entry={entry} />
-
-            {/* Part 2: The remaining private components with edit/fill options */}
-            <RemainingComponents entry={entry} />
+        <div className="max-w-4xl mx-auto p-4 md:p-6">
+            <h1 className="text-3xl font-bold mb-6">Your Journal History</h1> //
+            <div className="space-y-8">
+                {entries.map(entry => ( //
+                    <div key={entry.day}>
+                        <PostPreview 
+                            entry={{...entry.threeGoodThings, photoFileId: entry.photo?.photoFileId }} //
+                            onToggleExpand={() => toggleExpand(entry.day)} //
+                            isExpanded={expandedEntryId === entry.day} //
+                        />
+                        {expandedEntryId === entry.day && ( //
+                            <RemainingComponents entry={{ ...entry.oneThorn, ...entry.journalEntry }} /> //
+                        )}
+                    </div>
+                ))}
+            </div>
         </div>
     );
 };
 
-export default DailyJournalPosts;
+export default DailyJournalPosts; //

@@ -1,16 +1,25 @@
-// src/services/journalService.tsx
 import { account, databases } from '../appwriteConfig';
-import { ID, Query } from 'appwrite'; // Make sure Query is imported
-import { JournalData } from './aiService'; // 1. Import JournalData
+import { ID, Query } from 'appwrite';
+import { JournalData } from './aiService';
 
 const databaseId = import.meta.env.VITE_APPWRITE_DATABASE;
 const goodThingsCollectionId = import.meta.env.VITE_APPWRITE_GOODTHINGS_COLLECTION_ID;
 const OneThornCollectionId = import.meta.env.VITE_APPWRITE_ONETHORN_COLLECTION_ID;
-const journalCollectionId = import.meta.env.VITE_APPWRITE_JOURNALENTRY_COLLECTION_ID
-const photoCollectionId =  import.meta.env.VITE_APPWRITE_PHOTO_COLLECTION_ID;
-const completionCollectionId = import.meta.env.VITE_APPWRITE_COMPLETION_COLLECTION_ID
+const journalCollectionId = import.meta.env.VITE_APPWRITE_JOURNALENTRY_COLLECTION_ID;
+const photoCollectionId = import.meta.env.VITE_APPWRITE_PHOTO_COLLECTION_ID;
+const completionCollectionId = import.meta.env.VITE_APPWRITE_COMPLETION_COLLECTION_ID;
 
-// ... (other functions remain the same) ...
+// This interface defines the shape of the data coming from your app's state
+export interface JournalDataPayload {
+    threeGoodThings: string[];
+    isPublic: boolean;
+    oneThorn: string;
+    vibe: string;
+    photoFileId: string | null;
+    isPhotoPublic: boolean;
+    journalText: string;
+}
+
 export const getCurrentUser = async () => {
     try {
         return await account.get();
@@ -20,101 +29,98 @@ export const getCurrentUser = async () => {
     }
 };
 
-export const saveThreeGoodThings = async (goodThing1: string, goodThing2: string, goodThing3: string, isPublic: boolean) => {
+/**
+ * Submits all parts of the journal entry as a single atomic operation.
+ */
+export const submitJournalEntry = async (data: JournalDataPayload) => {
     const user = await getCurrentUser();
-    if (!user) return false;
-
-    try {
-        await databases.createDocument(
-            databaseId,
-            goodThingsCollectionId,
-            ID.unique(),
-            {
-                userId: user.$id,
-                goodThing1,
-                goodThing2,
-                goodThing3,
-                isPublic,
-                createdAt: new Date().toISOString(),
-            }
-        );
-        return true;
-    } catch (error) {
-        console.error("Error saving Three Good Things:", error);
-        return false;
+    if (!user) {
+        throw new Error("User not logged in. Cannot submit journal entry.");
     }
-};
-
-export const saveOneThorn = async (thorn: string) => {
-    const user = await getCurrentUser();
-    if (!user) return false;
-
+    
     try {
-        await databases.createDocument(
-            databaseId,
-            OneThornCollectionId, // Fixed: use correct collection ID
-            ID.unique(),
-            {
+        const entryDate = new Date().toISOString();
+
+        // 1. Save Three Good Things
+        if (data.threeGoodThings && data.threeGoodThings.some(t => t.trim() !== '')) {
+            await databases.createDocument(databaseId, goodThingsCollectionId, ID.unique(), {
                 userId: user.$id,
-                thornText: thorn, // Fixed: use the parameter name
+                goodThing1: data.threeGoodThings[0] || '',
+                goodThing2: data.threeGoodThings[1] || '',
+                goodThing3: data.threeGoodThings[2] || '',
+                isPublic: data.isPublic,
+                createdAt: entryDate,
+                vibe: data.vibe,
+            });
+        }
+
+        // 2. Save One Thorn
+        if (data.oneThorn && data.oneThorn.trim() !== '') {
+            await databases.createDocument(databaseId, OneThornCollectionId, ID.unique(), {
+                userId: user.$id,
+                thornText: data.oneThorn,
                 isPublic: false,
-                createdAt: new Date().toISOString(),
-            }
-        );
-        return true;
-    } catch (error) {
-        console.error("Error saving One Thorn:", error);
-        return false;
-    }
-};
-
-export const saveJournalEntry = async (entryText: string) => {
-    const user = await getCurrentUser();
-    if (!user) return false;
-
-    try {
-        await databases.createDocument(
-            databaseId,
-            journalCollectionId, // Fixed: use correct collection ID
-            ID.unique(),
-            {
+                createdAt: entryDate,
+                vibe: data.vibe,
+            });
+        }
+        
+        // 3. Save Journal Entry
+        if (data.journalText && data.journalText.trim() !== '') {
+            await databases.createDocument(databaseId, journalCollectionId, ID.unique(), {
                 userId: user.$id,
-                journalText: entryText, // Fixed: use the parameter name
+                journalText: data.journalText,
                 isPublic: false,
-                createdAt: new Date().toISOString(),
-            }
-        );
-        return true;
+                createdAt: entryDate,
+                vibe: data.vibe,
+            });
+        }
+
+        // 4. Save Photo Info (assumes file is already uploaded from AddPhoto step)
+        if (data.photoFileId) {
+             await databases.createDocument(databaseId, photoCollectionId, ID.unique(), {
+                userId: user.$id,
+                photoFileId: data.photoFileId,
+                isPublic: data.isPhotoPublic,
+                createdAt: entryDate,
+            });
+        }
+
+        // 5. Finally, mark the day as complete
+        await markDayAsComplete(user.$id);
+
+        return { success: true };
+
     } catch (error) {
-        console.error("Error saving Journal Entry:", error);
-        return false;
+        console.error("Error submitting full journal entry:", error);
+        return { success: false, error: error };
     }
 };
 
-export const saveAddPhoto = async (fileId: string, isPublic: boolean) => {
-    const user = await getCurrentUser();
-    if (!user) return false;
-
+/**
+ * Creates a "completion" record for the user for the current day.
+ */
+export const markDayAsComplete = async (userId: string): Promise<boolean> => {
     try {
         await databases.createDocument(
             databaseId,
-            photoCollectionId, // Use the correct collection for photos
+            completionCollectionId,
             ID.unique(),
             {
-                userId: user.$id,
-                photoFileId: fileId, // Save the file ID from Appwrite Storage
-                isPublic: isPublic, // Save the privacy setting
-                createdAt: new Date().toISOString(),
+                userId: userId, // Use lowercase 'u' to match your code's convention
+                completedAt: new Date().toISOString()
             }
         );
         return true;
     } catch (error) {
-        console.error("Error saving Photo:", error);
+        console.error("Error marking day as complete:", error);
         return false;
     }
 };
 
-// 2. Update the function's return type signature
+/**
+ * Fetches all journal data for the current user to display in the feed.
+ */
 export const getAllJournalDataForUser = async (): Promise<JournalData> => {
     const user = await getCurrentUser();
     if (!user) throw new Error("No user logged in");
@@ -122,14 +128,15 @@ export const getAllJournalDataForUser = async (): Promise<JournalData> => {
     const collectionsToFetch = [
         { id: goodThingsCollectionId, key: 'threeGoodThings' as keyof JournalData },
         { id: OneThornCollectionId, key: 'oneThorn' as keyof JournalData },
-        { id: journalCollectionId, key: 'journalEntries' as keyof JournalData }
+        { id: journalCollectionId, key: 'journalEntries' as keyof JournalData },
+        { id: photoCollectionId, key: 'photos' as keyof JournalData }
     ];
 
-    // 3. Set the type of the 'data' object to JournalData
     const data: JournalData = {
         threeGoodThings: [],
         oneThorn: [],
-        journalEntries: []
+        journalEntries: [],
+        photos: []
     };
  
     for (const collection of collectionsToFetch) {
@@ -140,11 +147,10 @@ export const getAllJournalDataForUser = async (): Promise<JournalData> => {
                     collection.id,
                     [
                         Query.equal('userId', user.$id),
-                        Query.orderDesc('createdAt'),
+                        Query.orderDesc('$createdAt'),
                         Query.limit(100)
                     ]
                 );
-                // Assigning to a key of JournalData is now type-safe
                 data[collection.key] = response.documents;
             } catch (error) {
                 console.error(`Error fetching from ${collection.key}:`, error);
@@ -152,52 +158,4 @@ export const getAllJournalDataForUser = async (): Promise<JournalData> => {
         }
     }
     return data;
-}
-       
-export const getTodaysJournalEntry = async (userId: string) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    try {
-        const response = await databases.listDocuments(
-            databaseId,    // Use the existing 'databaseId' variable
-            journalCollectionId,  // Use the existing 'collectionId' variable
-            [
-                Query.equal('userId', userId),
-                Query.greaterThanEqual('$createdAt', today.toISOString()) 
-            ]
-        );
-
-        if (response.documents.length > 0) {
-            return response.documents[0]; 
-        }
-
-        return null; 
-    } catch (error) {
-        console.error("Error fetching today's journal entry:", error);
-        return null;
-    }
-};
-/**
- * Creates a "completion" record for the user for the current day.
- * This should be called ONLY after all other journal data has been successfully saved.
- * @param {string} userId The ID of the user.
- * @returns {Promise<boolean>} True if successful, false otherwise.
- */
-export const markDayAsComplete = async (userId: string): Promise<boolean> => {
-    try {
-        await databases.createDocument(
-            databaseId,
-            completionCollectionId,
-            ID.unique(),
-            {
-                userId: userId,
-                completedAt: new Date().toISOString()
-            }
-        );
-        return true;
-    } catch (error) {
-        console.error("Error marking day as complete:", error);
-        return false;
-    }
 };

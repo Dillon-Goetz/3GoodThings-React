@@ -1,16 +1,36 @@
+// src/components/Layouts/LoggedInLayout.tsx
 import { Outlet } from 'react-router-dom';
 import Header from '../Shared/Header/Header';
 import { useTheme } from '../Shared/ThemeProvider';
 import { cn } from '@/lib/utils';
-import { Models } from 'appwrite'; // 1. Make sure Models is imported from appwrite
+import { Models } from 'appwrite';
 
-// 2. Define the props interface for the component
-interface LoggedInLayoutProps {
-  onLogout: () => void;
-  currentUser: Models.User<Models.Preferences> | null; // 3. Add currentUser to the interface
+// Define the shape of the journal data state
+interface JournalDataState {
+  threeGoodThings: string[];
+  isPublic: boolean;
+  oneThorn: string;
+  vibe: string;
+  photoFileId: string | null;
+  isPhotoPublic: boolean;
+  selectedFile: File | null;
+  journalText: string;
 }
 
-const LoggedInLayout: React.FC<LoggedInLayoutProps> = ({ onLogout, currentUser }) => {
+// 1. UPDATE THE PROPS INTERFACE
+interface LoggedInLayoutProps {
+  onLogout: () => void;
+  currentUser: Models.User<Models.Preferences> | null;
+  journalData: JournalDataState;
+  onJournalDataChange: (field: keyof JournalDataState, value: any) => void;
+}
+
+const LoggedInLayout: React.FC<LoggedInLayoutProps> = ({ 
+  onLogout, 
+  currentUser, 
+  journalData, 
+  onJournalDataChange 
+}) => {
   const { theme } = useTheme();
 
   return (
@@ -23,8 +43,12 @@ const LoggedInLayout: React.FC<LoggedInLayoutProps> = ({ onLogout, currentUser }
     >
       <Header onLogout={onLogout} />
       <main>
-        {/* Pass the currentUser to all child routes via the Outlet's context */}
-        <Outlet context={{ user: currentUser }} /> 
+        {/* 2. ADD THE JOURNAL STATE AND HANDLER TO THE OUTLET'S CONTEXT */}
+        <Outlet context={{ 
+          user: currentUser,
+          journalData: journalData,
+          onDataChange: onJournalDataChange,
+        }} /> 
       </main>
     </div>
   );
