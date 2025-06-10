@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { account } from "../../../appwriteConfig";
 import { useOutletContext, useSearchParams } from "react-router-dom";
 

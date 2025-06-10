@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useOutletContext } from "react-router-dom";
 import BackButton from "../../../components/Shared/NavigationButtons/BackButton";
 import NextButton from "../../../components/Shared/NavigationButtons/SkipButton";
@@ -16,7 +16,7 @@ const CenteringBreath = () => {
   const vibe = searchParams.get("vibe");
 
   const { goTo, currentIndex } = useOutletContext<OutletContext>();
-  const [message, setMessage] = useState<string>("");
+  const [,setMessage] = useState<string>("");
 
   useEffect(() => {
     switch (vibe) {

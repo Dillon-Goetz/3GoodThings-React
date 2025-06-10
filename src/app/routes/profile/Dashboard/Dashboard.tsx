@@ -8,7 +8,7 @@ import AiAnalysis from './components/AiAnalysis';
 import AiChat from './components/AiChat';
 
 const ProfileDashboard: React.FC = () => {
-    const { completionStatus, isLoading } = useDailyJournalProgress();
+    const { completionStatus} = useDailyJournalProgress();
     const [analysisOverview, setAnalysisOverview] = useState<string | null>(null);
 
     const handleAnalysisComplete = (overview: string) => {

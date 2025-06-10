@@ -1,4 +1,4 @@
-import React, { createContext, useContext, ReactNode } from 'react';
+import { createContext, useContext, ReactNode } from 'react';
 import { Models } from 'appwrite';
 
 // Define the shape of the data the context will provide

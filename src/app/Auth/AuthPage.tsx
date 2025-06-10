@@ -11,7 +11,7 @@ interface AuthPageProps {
 }
 
 const AuthPage = ({ mode, toggleMode, onLoginSuccess }: AuthPageProps) => {
-  const [error, setError] = useState<string | null>(null);
+  const [error] = useState<string | null>(null);
 
   useEffect(() => {
     // Check if the user is already logged in

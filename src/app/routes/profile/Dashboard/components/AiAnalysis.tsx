@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getAllJournalDataForUser } from '@/services/journalService';
-import { getAnalysisOverview, JournalData } from '@/services/aiService';
+import { getAnalysisOverview } from '@/services/aiService';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 
 interface AiAnalysisProps {

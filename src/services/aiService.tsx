@@ -1,5 +1,5 @@
 import OpenAI from 'openai';
-import { Models } from 'appwrite';
+// import { Models } from 'appwrite';
 
 // This is the model string for the free DeepSeek model on OpenRouter
 const deepSeekModel = "deepseek/deepseek-chat"; 
