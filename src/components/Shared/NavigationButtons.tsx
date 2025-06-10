@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 
 interface NavigationButtonsProps {
     currentFormIndex: number;
@@ -22,22 +22,32 @@ const NavigationButtons: React.FC<NavigationButtonsProps> = ({
     showBack = false,
     onBack,
 }) => {
-    const navigate = useNavigate();
-
     return (
-        <div>
+        <div className="flex items-center justify-between w-full mt-4">
+            {/* BACK BUTTON: Use "outline" style */}
             {showBack && (
-                <button onClick={onBack}>Back</button>
+                <Button variant="outline" onClick={onBack}>Back</Button>
             )}
-            {showSkip && currentFormIndex < formsLength - 1 && (
-                <button onClick={onSkip}>Skip</button>
-            )}
-            {currentFormIndex < formsLength - 1 && (
-                <button onClick={onNext}>Next</button>
-            )}
-            {showSubmit && currentFormIndex === formsLength - 1 && (
-                <button onClick={onNext}>Submit</button>
-            )}
+
+            {/* SPACER: This pushes the other buttons to the right */}
+            <div className="flex-grow"></div>
+
+            <div className="flex items-center gap-4">
+                {/* SKIP BUTTON: Use "ghost" style */}
+                {showSkip && currentFormIndex < formsLength - 1 && (
+                    <Button variant="ghost" onClick={onSkip}>Skip</Button>
+                )}
+                
+                {/* NEXT BUTTON: Use "secondary" style */}
+                {currentFormIndex < formsLength - 1 && (
+                    <Button variant="secondary" onClick={onNext}>Next</Button>
+                )}
+
+                {/* SUBMIT BUTTON: Use "secondary" style */}
+                {showSubmit && currentFormIndex === formsLength - 1 && (
+                    <Button variant="secondary" onClick={onNext}>Submit</Button>
+                )}
+            </div>
         </div>
     );
 };

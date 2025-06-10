@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Menu, Sun, Moon } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useTheme } from '@/components/Shared/ThemeProvider';
+import { ThemeToggle } from '../LiteDarkToggle/ThemeToggle';
+import { useTheme } from '../ThemeProvider'; // 1. Import the useTheme hook
+import { cn } from '@/lib/utils'; // 2. Ensure cn (classnames utility) is imported
 
 interface HeaderProps {
   onLogout: () => void;
@@ -10,7 +12,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ onLogout }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { theme, setTheme } = useTheme();
+  const { theme } = useTheme(); // 3. Get the current theme
   const navigate = useNavigate();
 
   const toggleMenu = () => {
@@ -27,11 +29,6 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
     setIsMenuOpen(false);
   };
 
-  const handleSliderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const isChecked = event.target.checked;
-    setTheme(isChecked ? 'dark' : 'light');
-  };
-
   return (
     <header className="relative p-4 flex justify-between items-center">
       {/* Left side: Menu Icon and Logo */}
@@ -44,26 +41,18 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
         </Link>
       </div>
 
-      {/* Right side: Theme Toggle Slider */}
-      <div>
-        <label className="theme-slider-switch">
-          <input
-            type="checkbox"
-            onChange={handleSliderChange}
-            checked={theme === 'dark'}
-          />
-          <span className="theme-slider-slider round">
-            <span className="slider-knob">
-              <Sun className="sun-icon h-5 w-5" />
-              <Moon className="moon-icon h-5 w-5" />
-            </span>
-          </span>
-        </label>
-      </div>
+      <ThemeToggle />
 
       {/* Dropdown Menu */}
       {isMenuOpen && (
-        <div className="absolute top-16 left-4 w-56 bg-card text-card-foreground rounded-md shadow-lg border z-10">
+        // 4. Update the className to be conditional
+        <div
+          className={cn(
+            "absolute top-16 left-4 w-56 rounded-md shadow-lg border z-10",
+            // This applies a solid white or a solid dark background
+            theme === 'light' ? 'bg-white text-black' : 'bg-[#1C2033] text-white'
+          )}
+        >
           <div className="p-2 flex flex-col space-y-1">
             <Button
               variant="ghost"

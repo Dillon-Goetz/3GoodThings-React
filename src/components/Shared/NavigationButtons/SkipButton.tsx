@@ -1,12 +1,14 @@
 import React from 'react';
+import { Button } from '@/components/ui/button';
 
 interface SkipButtonProps {
     onClick: () => void;
-    text?: string; // Optional text prop if you want to say 'Next' or 'Advance' without saving anything. 
+    text?: string;
 }
 
 const SkipButton: React.FC<SkipButtonProps> = ({ onClick, text = "Skip" }) => {
-    return <button onClick={onClick}>{text}</button>;
+    // Style: "ghost"
+    return <Button variant="outline" onClick={onClick}>{text}</Button>;
 };
 
 export default SkipButton;

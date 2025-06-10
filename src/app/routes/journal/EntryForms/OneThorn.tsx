@@ -1,56 +1,66 @@
-import React, { useState } from 'react';
+import React from 'react'; // No longer need useState
 import { useOutletContext } from 'react-router-dom';
-import BackButton from '../../../../components/Shared/NavigationButtons/BackButton';
-import SaveNextButton from '../../../../components/Shared/NavigationButtons/SaveNextButton';
-import SkipButton from '../../../../components/Shared/NavigationButtons/SkipButton';
 import { saveOneThorn } from '../../../../services/journalService';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { JournalStepLayout } from '@/components/Layouts/JournalStepLayout';
 
-interface OutletContextType {
+// Define the shape of the context we expect from JournalLayout
+interface JournalContextType {
   goTo: (i: number) => void;
   currentIndex: number;
-  lastIndex: number;
+  journalData: {
+    oneThorn: string;
+  };
+  onDataChange: (field: string, value: any) => void;
 }
 
 const OneThorn: React.FC = () => {
-  const { goTo, currentIndex } = useOutletContext<OutletContextType>();
-  const [oneThorn, setOneThorn] = useState('');
-  const [isSaving, setIsSaving] = useState(false);
+  // 1. Get the shared state and update function from the context
+  const { goTo, currentIndex, journalData, onDataChange } = useOutletContext<JournalContextType>();
+  const [isSaving, setIsSaving] = React.useState(false);
 
   const handleSaveAndNext = async () => {
     setIsSaving(true);
-    const success = await saveOneThorn(oneThorn);
+    // This saves the data from the shared state
+    const success = await saveOneThorn(journalData.oneThorn);
     setIsSaving(false);
 
     if (success) {
-      setOneThorn('');
       goTo(currentIndex + 1);
     } else {
-      alert('Error saving your entries. Please try again.');
+      alert('Error saving your entry. Please try again.');
     }
   };
-
-  return (
-    <section>
-      <form onSubmit={(e) => e.preventDefault()}>
-        <div>
-          <p>Not all days are created equal, want to share one thorn?</p>
-          <label htmlFor="one-thorn-textarea">One Thorn:</label>
-          <textarea
-            id="one-thorn-textarea"
-            value={oneThorn}
-            placeholder="Optional: one thorn.."
-            onChange={(e) => setOneThorn(e.target.value)}
-            rows={5}
-          />
+ return (
+        // Add a negative top margin here to pull the whole component up
+        <div className="-mt-16"> 
+            <JournalStepLayout
+                title="One Thorn"
+                description="Acknowledge one challenge or difficulty from your day. What was the 'thorn' on your rose?"
+                footerContent={
+                    <div className="flex justify-between items-center">
+                        <Button variant="outline" onClick={() => goTo(currentIndex - 1)}>
+                            Back
+                        </Button>
+                        <Button variant="secondary" onClick={handleSaveAndNext} disabled={isSaving || !journalData.oneThorn.trim()}>
+                            {journalData.oneThorn.trim() ? "Save & Next" : "Skip & Next"}
+                        </Button>
+                    </div>
+                }
+            >
+                <div className="grid w-full gap-1.5">
+                    <Textarea
+                        id="one-thorn"
+                        placeholder="e.g., I felt overwhelmed by my to-do list."
+                        value={journalData.oneThorn}
+                        onChange={(e) => onDataChange('oneThorn', e.target.value)}
+                        className="min-h-[100px]"
+                    />
+                </div>
+            </JournalStepLayout>
         </div>
-      </form>
-      <div>
-        <BackButton onClick={() => goTo(currentIndex - 1)} />
-        <SaveNextButton onClick={handleSaveAndNext} disabled={isSaving || !oneThorn.trim()} />
-        <SkipButton onClick={() => goTo(currentIndex + 1)} />
-      </div>
-    </section>
-  );
+    );
 };
 
 export default OneThorn;

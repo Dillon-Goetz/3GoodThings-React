@@ -8,6 +8,7 @@ const goodThingsCollectionId = import.meta.env.VITE_APPWRITE_GOODTHINGS_COLLECTI
 const OneThornCollectionId = import.meta.env.VITE_APPWRITE_ONETHORN_COLLECTION_ID;
 const journalCollectionId = import.meta.env.VITE_APPWRITE_JOURNALENTRY_COLLECTION_ID
 const photoCollectionId =  import.meta.env.VITE_APPWRITE_PHOTO_COLLECTION_ID;
+const completionCollectionId = import.meta.env.VITE_APPWRITE_COMPLETION_COLLECTION_ID
 
 // ... (other functions remain the same) ...
 export const getCurrentUser = async () => {
@@ -132,7 +133,7 @@ export const getAllJournalDataForUser = async (): Promise<JournalData> => {
         oneThorn: [],
         journalEntries: []
     };
-
+ 
     for (const collection of collectionsToFetch) {
         if (collection.id) {
             try {
@@ -153,4 +154,52 @@ export const getAllJournalDataForUser = async (): Promise<JournalData> => {
         }
     }
     return data;
+}
+       
+export const getTodaysJournalEntry = async (userId: string) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    try {
+        const response = await databases.listDocuments(
+            databaseId,    // Use the existing 'databaseId' variable
+            journalCollectionId,  // Use the existing 'collectionId' variable
+            [
+                Query.equal('userId', userId),
+                Query.greaterThanEqual('$createdAt', today.toISOString()) 
+            ]
+        );
+
+        if (response.documents.length > 0) {
+            return response.documents[0]; 
+        }
+
+        return null; 
+    } catch (error) {
+        console.error("Error fetching today's journal entry:", error);
+        return null;
+    }
+};
+/**
+ * Creates a "completion" record for the user for the current day.
+ * This should be called ONLY after all other journal data has been successfully saved.
+ * @param {string} userId The ID of the user.
+ * @returns {Promise<boolean>} True if successful, false otherwise.
+ */
+export const markDayAsComplete = async (userId: string): Promise<boolean> => {
+    try {
+        await databases.createDocument(
+            databaseId,
+            completionCollectionId,
+            ID.unique(),
+            {
+                userId: userId,
+                completedAt: new Date().toISOString()
+            }
+        );
+        return true;
+    } catch (error) {
+        console.error("Error marking day as complete:", error);
+        return false;
+    }
 };

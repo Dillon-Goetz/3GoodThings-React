@@ -6,7 +6,7 @@ import ProfileDashboard from './routes/profile/Dashboard/Dashboard';
 import LoggedInLayout from '../components/Layouts/LoggedInLayout';
 import AppRoutes from './routes/index';
 import { account } from '../appwriteConfig';
-import { Models } from 'appwrite';
+import { Models } from 'appwrite'
 import './App.css';
 import '../style.css';
 
@@ -79,13 +79,14 @@ const App: React.FC = () => {
           }
         />
 
-        <Route
-          element={
-            isLoggedIn ? (
-              <LoggedInLayout onLogout={handleLogout} />
-            ) : (
-              <Navigate to="/login" replace state={{ from: location }} />
-            )
+      <Route
+         element={
+          isLoggedIn ? (
+            // 1. Pass the currentUser state as a prop here
+            <LoggedInLayout onLogout={handleLogout} currentUser={currentUser} />
+        ) : (
+            <Navigate to="/login" replace state={{ from: location }} />
+        )
           }
         >
           <Route index element={<Navigate to="/journal" replace />} />

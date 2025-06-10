@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useOutletContext } from "react-router-dom";
 import BackButton from "../../../components/Shared/NavigationButtons/BackButton";
 import NextButton from "../../../components/Shared/NavigationButtons/SkipButton";
+import { JournalStepLayout } from "@/components/Layouts/JournalStepLayout";
 
 interface OutletContext {
   goTo: (index: number, query?: string) => void;
@@ -40,15 +41,24 @@ const CenteringBreath = () => {
   }, [vibe]);
 
   return (
-    <div>
-      <h2>Centering Breath</h2>
-      <p>{message}</p>
-      <p>Inhale deeply through your nose...</p>
-      <p>Exhale slowly through your mouth...</p>
-      <p>Repeat 2 more times.</p>
-      <BackButton onClick={() => goTo(currentIndex - 1)} />
-      <NextButton onClick={() => goTo(currentIndex + 1)} text="I'm Ready" />
-    </div>
+    <JournalStepLayout
+      title="Centering Breath"
+      description="Let's take a moment to breathe and center ourselves."
+      // 4. Pass the navigation buttons to the footer
+      footerContent={
+        <div className="flex items-center justify-between w-full max-w-xs mx-auto">
+            <BackButton onClick={() => goTo(currentIndex - 1)} />
+            <NextButton onClick={() => goTo(currentIndex + 1)} text="I'm Ready" />
+        </div>
+      }
+    >
+        {/* 3. The main content goes inside the layout as children */}
+        <div className="text-lg space-y-2">
+            <p>Inhale deeply through your nose...</p>
+            <p>Exhale slowly through your mouth...</p>
+            <p>Repeat 2 more times.</p>
+        </div>
+    </JournalStepLayout>
   );
 };
 
