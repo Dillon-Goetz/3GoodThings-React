@@ -15,36 +15,28 @@ const storage = new Storage(client);
  * @returns A promise that resolves with the URL (string) of the uploaded file.
  * @throws Will throw an error if the upload fails or if BUCKET_ID is not configured.
  */
+// Find your uploadImage function and make this change:
 export const uploadImage = async (file: File): Promise<string> => {
-    //failsafe for bucket retrieval
     if (!BUCKET_ID) {
-        const errorMessage = "Storage Bucket ID is not configured. Please set VITE_APPWRITE_IMAGESTORAGE_ID in your .env file.";
+        const errorMessage = "Storage Bucket ID is not configured...";
         console.error(errorMessage);
         throw new Error(errorMessage);
     }
-
     if (!file) {
         throw new Error("No file provided for upload.");
     }
-
     try {
-        // 1. Create (upload) the file in the specified bucket.
-        // ID.unique() generates a unique ID for the file in Appwrite Storage.
         const fileResponse = await storage.createFile(
             BUCKET_ID,
-            ID.unique(), // Use ID from 'appwrite'
+            ID.unique(),
             file
         );
 
-        // 2. Get a publicly accessible URL for the uploaded file.
-        // storage.getFileView(BUCKET_ID, fileId) returns a URL object.
-        const fileUrl = storage.getFileView(BUCKET_ID, fileResponse.$id);
-
-        return fileUrl; // Return the string representation of the URL.
+        // Instead of returning a URL object, return the file's unique ID.
+        return fileResponse.$id; 
 
     } catch (error) {
         console.error("Error uploading image to Appwrite Storage:", error);
-        // Re-throw the error so the calling function (e.g., in journalService) can handle it.
         throw error;
     }
 };

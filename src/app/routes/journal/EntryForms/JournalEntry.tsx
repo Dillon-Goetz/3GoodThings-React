@@ -1,56 +1,68 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useOutletContext } from 'react-router-dom';
-import BackButton from '../../../../components/Shared/NavigationButtons/BackButton';
-import SaveNextButton from '../../../../components/Shared/NavigationButtons/SaveNextButton';
-import SkipButton from '../../../../components/Shared/NavigationButtons/SkipButton';
 import { saveJournalEntry } from '../../../../services/journalService';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import JournalStepLayout from '@/components/Layouts/JournalStepLayout';
 
-interface OutletContextType {
+// Define the shape of the context we expect from JournalLayout
+interface JournalContextType {
   goTo: (i: number) => void;
   currentIndex: number;
-  lastIndex: number;
+  journalData: {
+    journalText: string;
+  };
+  onDataChange: (field: string, value: any) => void;
 }
 
-const JournalTextEntry: React.FC = () => {
-  const { goTo, currentIndex } = useOutletContext<OutletContextType>();
-
-  const [journalEntry, setJournalEntry] = useState('');
-  const [isSaving, setIsSaving] = useState(false);
+const JournalEntry: React.FC = () => {
+  const { goTo, currentIndex, journalData, onDataChange } = useOutletContext<JournalContextType>();
+  const [isSaving, setIsSaving] = React.useState(false);
 
   const handleSaveAndNext = async () => {
-    setIsSaving(true);
-    const success = await saveJournalEntry(journalEntry);
-    setIsSaving(false);
+    // This step is optional, so we only save if there is text.
+    if (journalData.journalText.trim()) {
+      setIsSaving(true);
+      const success = await saveJournalEntry(journalData.journalText);
+      setIsSaving(false);
 
-    if (success) {
-      setJournalEntry('');
-      goTo(currentIndex + 1);
-    } else {
-      alert('Error saving your entries. Please try again.');
+      if (!success) {
+        alert('Error saving your journal entry. Please try again.');
+        return; // Stop if saving fails
+      }
     }
+    goTo(currentIndex + 1); // Navigate to the next step
   };
 
+  const buttonText = journalData.journalText.trim() ? "Save & Next" : "Skip & Next";
+
   return (
-    <section>
-      <form onSubmit={(e) => e.preventDefault()}>
-        <div>
-          <label htmlFor="journal-entry-textarea">Journal Entry:</label>
-          <textarea
-            id="journal-entry-textarea"
-            value={journalEntry}
-            placeholder="Optional: Write your journal entry here..."
-            onChange={(e) => setJournalEntry(e.target.value)}
-            rows={6}
-          />
+    <JournalStepLayout
+      title="Journal Entry"
+      description="Optionally, write about anything else that is on your mind. Your journal entries are always private."
+      footerContent={
+        <div className="flex justify-between items-center">
+          <Button variant="outline" onClick={() => goTo(currentIndex - 1)}>
+            Back
+          </Button>
+          <Button variant="secondary" onClick={handleSaveAndNext} disabled={isSaving}>
+            {buttonText}
+          </Button>
         </div>
-      </form>
-      <div>
-        <BackButton onClick={() => goTo(currentIndex - 1)} />
-        <SaveNextButton onClick={handleSaveAndNext} disabled={isSaving || !journalEntry.trim()} />
-        <SkipButton onClick={() => goTo(currentIndex + 1)} />
+      }
+    >
+      <div className="grid w-full gap-1.5">
+        <Textarea
+          id="journal-entry-textarea"
+          placeholder="Write as much or as little as you like..."
+          // Bind the value and onChange to the shared state from the context
+          value={journalData.journalText}
+          onChange={(e) => onDataChange('journalText', e.target.value)}
+          className="min-h-[200px]"
+        />
       </div>
-    </section>
+    </JournalStepLayout>
   );
 };
 
-export default JournalTextEntry;
+export default JournalEntry;

@@ -28,12 +28,14 @@ const JournalLayout: React.FC = () => {
   // 1. Create a state object to hold all the data for the journal entry
   const [journalData, setJournalData] = useState({
     threeGoodThings: ['', '', ''],
+    isPublic: true,
     oneThorn: '',
     vibe: '',
     photoFileId: null,
-    isPublic: true,
+    isPhotoPublic: true,
+    selectedFile: null as File | null,
+    journalText: '', // Add this line
   });
-
   // 2. Create a single handler to update any field in the journalData state
   const handleDataChange = (field: keyof typeof journalData, value: any) => {
     setJournalData(prevData => ({

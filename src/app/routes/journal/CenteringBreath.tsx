@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useOutletContext } from "react-router-dom";
 import BackButton from "../../../components/Shared/NavigationButtons/BackButton";
 import NextButton from "../../../components/Shared/NavigationButtons/SkipButton";
-import { JournalStepLayout } from "@/components/Layouts/JournalStepLayout";
+import JournalStepLayout from "@/components/Layouts/JournalStepLayout";
 
 interface OutletContext {
   goTo: (index: number, query?: string) => void;

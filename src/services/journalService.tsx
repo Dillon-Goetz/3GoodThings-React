@@ -91,20 +91,19 @@ export const saveJournalEntry = async (entryText: string) => {
     }
 };
 
-export const saveAddPhoto = async (photoUrl: string) => {
+export const saveAddPhoto = async (fileId: string, isPublic: boolean) => {
     const user = await getCurrentUser();
     if (!user) return false;
 
     try {
-
-
         await databases.createDocument(
             databaseId,
-            photoCollectionId,
+            photoCollectionId, // Use the correct collection for photos
             ID.unique(),
             {
                 userId: user.$id,
-                photoUrl,
+                photoFileId: fileId, // Save the file ID from Appwrite Storage
+                isPublic: isPublic, // Save the privacy setting
                 createdAt: new Date().toISOString(),
             }
         );
@@ -114,7 +113,6 @@ export const saveAddPhoto = async (photoUrl: string) => {
         return false;
     }
 };
-
 
 // 2. Update the function's return type signature
 export const getAllJournalDataForUser = async (): Promise<JournalData> => {

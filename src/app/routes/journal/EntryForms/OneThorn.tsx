@@ -3,7 +3,7 @@ import { useOutletContext } from 'react-router-dom';
 import { saveOneThorn } from '../../../../services/journalService';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { JournalStepLayout } from '@/components/Layouts/JournalStepLayout';
+import JournalStepLayout from '@/components/Layouts/JournalStepLayout';
 
 // Define the shape of the context we expect from JournalLayout
 interface JournalContextType {
