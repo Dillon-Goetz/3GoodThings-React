@@ -6,10 +6,10 @@ import ProfileDashboard from './routes/profile/Dashboard/Dashboard';
 import LoggedInLayout from '../components/Layouts/LoggedInLayout';
 import AppRoutes from './routes/index';
 import { account } from '../appwriteConfig';
-import { Models } from 'appwrite'
+import { Models } from 'appwrite';
 import './App.css';
 import '../style.css';
-import HomePage from './routes/home/'
+import HomePage from './routes/home/HomePage'; // Ensure this import is active and correct
 
 const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
@@ -17,8 +17,7 @@ const App: React.FC = () => {
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
   const navigate = useNavigate();
   const location = useLocation();
-  
-  // 1. ADD THE JOURNAL STATE AND HANDLER HERE
+
   const [journalData, setJournalData] = useState({
     threeGoodThings: ['', '', ''],
     isPublic: true,
@@ -36,7 +35,6 @@ const App: React.FC = () => {
       [field]: value,
     }));
   };
-
 
   useEffect(() => {
     const checkSession = async () => {
@@ -59,6 +57,7 @@ const App: React.FC = () => {
   const handleLoginSuccess = (user: Models.User<Models.Preferences>) => {
     setIsLoggedIn(true);
     setCurrentUser(user);
+    // Keep this the same, it navigates to /journal or the original destination
     const origin = location.state?.from?.pathname || '/journal';
     navigate(origin, { replace: true });
   };
@@ -71,7 +70,8 @@ const App: React.FC = () => {
     } finally {
       setIsLoggedIn(false);
       setCurrentUser(null);
-      navigate('/login');
+      // CHANGE 1: Redirect to /home instead of /login on logout
+      navigate('/home');
     }
   };
 
@@ -82,6 +82,13 @@ const App: React.FC = () => {
   return (
     <div className="app-container">
       <Routes>
+        {/* CHANGE 2: Add the new /home route */}
+        <Route
+          path="/home"
+          element={!isLoggedIn ? <HomePage /> : <Navigate to="/journal" replace />}
+        />
+
+        {/* Existing /login route - also needs to redirect to /journal if logged in */}
         <Route
           path="/login"
           element={
@@ -97,29 +104,33 @@ const App: React.FC = () => {
           }
         />
 
-      <Route
-         element={
-          isLoggedIn ? (
-            // 2. PASS THE STATE AND HANDLER DOWN TO LoggedInLayout
-            <LoggedInLayout 
-              onLogout={handleLogout} 
-              currentUser={currentUser}
-              journalData={journalData}
-              onJournalDataChange={handleDataChange}
-            />
-        ) : (
-            <Navigate to="/login" replace state={{ from: location }} />
-        )
+        {/* Protected routes wrapped by LoggedInLayout */}
+        <Route
+          element={
+            isLoggedIn ? (
+              <LoggedInLayout
+                onLogout={handleLogout}
+                currentUser={currentUser}
+                journalData={journalData}
+                onJournalDataChange={handleDataChange}
+              />
+            ) : (
+              // CHANGE 3: Redirect unauthenticated users from protected routes to /home
+              <Navigate to="/home" replace state={{ from: location }} />
+            )
           }
         >
+          {/* Default logged-in route: redirect root to /journal */}
           <Route index element={<Navigate to="/journal" replace />} />
           <Route path="/journal/*" element={<AppRoutes />} />
           <Route path="/profile" element={<ProfileDashboard />} />
         </Route>
 
+        {/* CHANGE 4: Update catch-all route */}
+        {/* Redirects any unmatched path to /journal if logged in, or /home if not */}
         <Route
           path="*"
-          element={<Navigate to={isLoggedIn ? "/journal" : "/login"} replace />}
+          element={<Navigate to={isLoggedIn ? "/journal" : "/home"} replace />}
         />
       </Routes>
     </div>
