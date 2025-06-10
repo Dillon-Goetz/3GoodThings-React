@@ -3,12 +3,14 @@ import OpenAI from 'openai';
 
 // This is the model string for the free DeepSeek model on OpenRouter
 const deepSeekModel = "deepseek/deepseek-chat"; 
+const OPENROUTER_API_KEY = import.meta.env.VITE_OPENROUTER_CHATBOT_API_KEY;
 
 const openAI = new OpenAI({
-    baseURL: "https://openrouter.ai/api/v1",
-    apiKey: import.meta.env.VITE_OPENROUTER_CHATBOT_API_KEY,
-    // This is required to use the library in a browser environment
-    dangerouslyAllowBrowser: true,
+    baseURL: 'https://openrouter.ai/api/v1',
+    dangerouslyAllowBrowser: true, // This setting is necessary for browser environments
+    defaultHeaders: {
+        Authorization: `Bearer ${OPENROUTER_API_KEY}`,
+    },
 });
 
 // Define a type for the combined journal data we'll analyze
