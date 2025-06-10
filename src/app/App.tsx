@@ -9,6 +9,7 @@ import { account } from '../appwriteConfig';
 import { Models } from 'appwrite'
 import './App.css';
 import '../style.css';
+import HomePage from './routes/home/'
 
 const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
