@@ -1,10 +1,10 @@
 // src/app/Auth/Signup.tsx
 import React, { useState } from "react";
-import { ID, Models } from "appwrite";
+import { Models } from "appwrite"; 
 import { account } from "../../appwriteConfig";
-import { Button } from "@/components/ui/button"; // Import your Shadcn Button
-import { Label } from "@/components/ui/label";   // Import your Shadcn Label
-import { Input } from "@/components/ui/input";   // Import your Shadcn Input
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 interface SignupProps {
   onLoginSuccess: (user: Models.User<Models.Preferences>) => void;
@@ -15,16 +15,16 @@ function Signup({ onLoginSuccess }: SignupProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false); // Add loading state
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    setIsLoading(true); // Set loading true on submission
+    setIsLoading(true);
 
     try {
-      // Create the user account
-      await account.create(ID.unique(), email, password, name);
+      // --- CHANGE THIS LINE ---
+      await account.create('unique()', email, password, name); // Changed from ID.unique()
 
       // Create a session to log the user in after signing up
       await account.createSession(email, password);
@@ -32,10 +32,9 @@ function Signup({ onLoginSuccess }: SignupProps) {
       // Get user details and notify parent component
       const user = await account.get();
       onLoginSuccess(user);
-    } catch (error: any) { // Catch the specific error to display to user
+    } catch (error: any) {
       console.error("Signup error:", error);
-      // Provide more user-friendly error messages based on Appwrite errors
-      if (error.code === 409) { // Conflict - email already exists
+      if (error.code === 409) {
         setError("Account with this email already exists.");
       } else if (error.code === 400 && error.message.includes("password")) {
         setError("Password must be at least 8 characters long.");
@@ -43,13 +42,13 @@ function Signup({ onLoginSuccess }: SignupProps) {
         setError("Failed to create an account. Please try again.");
       }
     } finally {
-      setIsLoading(false); // Always reset loading state
+      setIsLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSignup} className="grid gap-4"> {/* Use Tailwind's grid gap for spacing */}
-      <div className="grid gap-1.5"> {/* Group label and input for Name */}
+    <form onSubmit={handleSignup} className="grid gap-4">
+      <div className="grid gap-1.5">
         <Label htmlFor="name">Name</Label>
         <Input
           id="name"
@@ -60,7 +59,7 @@ function Signup({ onLoginSuccess }: SignupProps) {
           required
         />
       </div>
-      <div className="grid gap-1.5"> {/* Group label and input for Email */}
+      <div className="grid gap-1.5">
         <Label htmlFor="email">Email</Label>
         <Input
           id="email"
@@ -71,7 +70,7 @@ function Signup({ onLoginSuccess }: SignupProps) {
           required
         />
       </div>
-      <div className="grid gap-1.5"> {/* Group label and input for Password */}
+      <div className="grid gap-1.5">
         <Label htmlFor="password">Password</Label>
         <Input
           id="password"
@@ -82,10 +81,9 @@ function Signup({ onLoginSuccess }: SignupProps) {
           required
         />
       </div>
-      {/* Display error message using Tailwind text-destructive color */}
       {error && <p className="text-sm text-destructive">{error}</p>}
       <Button type="submit" className="w-full" disabled={isLoading}>
-        {isLoading ? "Signing up..." : "Sign up"} {/* Dynamic button text based on loading */}
+        {isLoading ? "Signing up..." : "Sign up"}
       </Button>
     </form>
   );

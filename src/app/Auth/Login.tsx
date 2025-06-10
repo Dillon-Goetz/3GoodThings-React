@@ -19,14 +19,14 @@ const Login = ({ onLoginSuccess }: LoginProps) => {
     e.preventDefault();
     setError(null);
     setIsLoading(true); // Set loading true on submission
-    console.log("Login.tsx: Attempting login with email:", email); // DEBUG
+    // console.log("Login.tsx: Attempting login with email:", email); // DEBUG
 
     try {
       await account.createEmailPasswordSession(email, password);
-      console.log("Login.tsx: createEmailPasswordSession successful."); // DEBUG
+      // console.log("Login.tsx: createEmailPasswordSession successful."); // DEBUG
 
       const user = await account.get();
-      console.log("Login.tsx: account.get() after session creation:", user); // DEBUG
+      // console.log("Login.tsx: account.get() after session creation:", user); // DEBUG
       onLoginSuccess(user);
 
     } catch (error: any) { // Catch the error to display to user
