@@ -15,21 +15,21 @@ interface AuthPageProps {
 const AuthPage = ({ mode, toggleMode, onLoginSuccess }: AuthPageProps) => {
   const [error] = useState<string | null>(null);
 
-  // Consider removing or commenting out this useEffect
-  // as App.tsx's useEffect handles the initial session check and redirect.
-  // Keeping it here might cause flickering or unexpected redirects if
-  // App.tsx has already determined the login status.
-  useEffect(() => {
-    const checkSession = async () => {
-      try {
-        const user = await account.get();
-        onLoginSuccess(user);
-      } catch (err) {
-        console.log("No active session found.");
-      }
-    };
-    checkSession();
-  }, [onLoginSuccess]);
+  // // Consider removing or commenting out this useEffect
+  // // as App.tsx's useEffect handles the initial session check and redirect.
+  // // Keeping it here might cause flickering or unexpected redirects if
+  // // App.tsx has already determined the login status.
+  // useEffect(() => {
+  //   const checkSession = async () => {
+  //     try {
+  //       const user = await account.get();
+  //       onLoginSuccess(user);
+  //     } catch (err) {
+  //       console.log("No active session found.");
+  //     }
+  //   };
+  //   checkSession();
+  // }, [onLoginSuccess]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-secondary p-4">

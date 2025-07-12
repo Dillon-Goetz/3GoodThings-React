@@ -1,6 +1,6 @@
 // src/app/Auth/Signup.tsx
 import React, { useState } from "react";
-import { Models, ID } from "appwrite"; // ID might not be strictly needed if 'unique()' works for you
+import { Models } from "appwrite"; 
 import { account } from "../../appwriteConfig";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";

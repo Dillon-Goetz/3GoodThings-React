@@ -21,7 +21,6 @@ interface JournalContextType {
 const ThreeGoodThings: React.FC = () => {
   const { goTo, currentIndex, journalData, onDataChange } = useOutletContext<JournalContextType>();
 
-  // KEPT THE FULL ARRAY OF PLACEHOLDERS, AS REQUESTED
   const allPlaceholders = [
     "e.g., I enjoyed my morning coffee.",
     "e.g., A coworker gave me a nice compliment.",
@@ -78,8 +77,16 @@ const ThreeGoodThings: React.FC = () => {
     onDataChange('threeGoodThings', newThings);
   };
 
+  // Add validation logic here
+  const canProceed = useMemo(() => {
+    // Check if all three good things are filled and not just whitespace
+    return journalData.threeGoodThings.every(thing => thing && thing.trim() !== '');
+  }, [journalData.threeGoodThings]);
+
   const handleNext = () => {
-    goTo(currentIndex + 1);
+    if (canProceed) { // Only proceed if valid
+      goTo(currentIndex + 1);
+    }
   };
   
   return (
@@ -91,7 +98,7 @@ const ThreeGoodThings: React.FC = () => {
           <Button variant="outline" onClick={() => goTo(currentIndex - 1)}>
             Back
           </Button>
-          <Button onClick={handleNext}>
+          <Button onClick={handleNext} disabled={!canProceed}> {/* Disable button if not valid */}
             Next
           </Button>
         </div>
